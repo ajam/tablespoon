@@ -1,4 +1,4 @@
-var sequel = require('../sequel.js').connect('pg://mike:5432@localhost/postgres');
+var sequel = require('../sequel.js').connect('pg://mike@localhost/node');
 
 var data = [
 	{
@@ -39,4 +39,3 @@ sequel.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 sequel.query.each('SELECT * FROM cities WHERE 15 = ANY (temp)', function(row){
 	console.log(row)
 })
-
