@@ -59,11 +59,13 @@ var helpers = {
 		return stmt;
 	},
 	handleErr: function(err, msg, qt){
-		var pos;
+		var pos,
+				err_text = 'Error in ' + msg;
 		if (err){ 
 			pos = Number(err.position);
-			if (qt) {qt = 'QUERY EXCERPT:\n' + qt.substr(Math.max(pos - 50), 50) + '^' + qt.substr(pos, 50)} // Display the area where the query threw an error marked by a `^`. If the error occurs within the first fifty characters, make it start at the beginning of the string.
-			return console.error(qt,'\n\nError in ' + msg + ':', err)	
+			if (qt) {err_text += ':\n' + qt.substr(Math.max(0, pos - 50), Math.min(pos, 50)) + '^' + qt.substr(pos, Math.min(qt.length - pos, 75)) + '\n\n'} // Display the area where the query threw an error marked by a `^`. If the error occurs within the first fifty characters, make it start at the beginning of the string.
+			console.error(err_text, err)	
+			throw err
 		}
 	}
 }
@@ -76,8 +78,8 @@ function connectToDb(){
 	});
 }
 
-function createTableCommands(table_name, table_data, cb){
-	var create_table_text = 'CREATE TEMP TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + helpers.describeColumns(table_data) + ')';
+function createTableCommands(table_name, table_data, table_schema, cb){
+	var create_table_text = 'CREATE TEMP TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.describeColumns(table_data)) + ')';
 	client.query(create_table_text, function(err, result){
   	helpers.handleErr(err, 'table creation', create_table_text)
 	});
@@ -87,14 +89,14 @@ function createTableCommands(table_name, table_data, cb){
   });
 }
 
-function createTableSync(table_name, table_data){
+function createTableSync(table_name, table_data, table_schema){
 	connectToDb();
-	createTableCommands(table_name, table_data);
+	createTableCommands(table_name, table_data, table_schema);
 }
 
 function query(query_text, cb){
   client.query(query_text, function(err, result){
-  	helpers.handleErr(err, 'query "' + query_text + '"')
+  	helpers.handleErr(err, 'query', query_text)
   	cb(result.rows);
   })
 }
