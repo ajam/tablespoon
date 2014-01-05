@@ -16,7 +16,7 @@ var helpers = {
 				if (_.isObject(value[0]))       { return 'json'   } // If the arry's first child is an object, assume that it's an array of objects and thus json.
 				if (typeof value[0] == 'string'){ return 'text[]' } // If it's text, then assume it's a list of strings.
 				return 'integer[]'                                  // Otherwise, assume it's a list of integers. Sorry, no mixed type support.
- 			}else { return 'json' }                               // If it's not an array, then it's an object and will be interpreted as json.
+ 			} else { return 'json' }                               // If it's not an array, then it's an object and will be interpreted as json.
 		}
 	},
 	describeColumns: function(data){
