@@ -35,6 +35,7 @@ var helpers = {
 		return columns.join(',')
 	},
 	prepValuesForInsert: function(holder, data_row, quote_char){
+		var arr_holder = []; // In case your value is an array, you'll want to run this function recursively to properly quote its values.
 		if (!quote_char) {quote_char = '\''}
 		_.values(data_row).forEach(function(value){
 			if (typeof value == 'string'){
@@ -42,7 +43,6 @@ var helpers = {
 			} else if (typeof value == 'number'){
 				holder.push(value)
 			} else if (_.isArray(value)){
-				var arr_holder = []
 				arr_holder = helpers.prepValuesForInsert(arr_holder, value, '"');
 				holder.push("'{" + arr_holder + "}'");
 			} else if (_.isObject(value)){
