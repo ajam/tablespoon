@@ -3,34 +3,43 @@ var sequel = require('../sequel.js')
 var data = [
 	{
 		city: 'New York',
-		temp: [27,20],
+		temp: {temp:5},
 		country: 'USA'
 	},
 	{
 		city: 'Los Angeles',
-		temp: [72,20],
+		temp: {temp:5},
 		country: 'USA'
 	},
 	{
 		city: 'Paris',
-		temp: [34,20],
+		temp: {temp:5},
 		country: 'France'
 	},
 	{
 		city: 'Marseille',
-		temp: [43,20],
+		temp: {temp:5},
 		country: 'France'
 	},
 	{
 		city: 'London',
-		temp: [33,20],
+		temp: {temp: 2},
 		country: 'UK'
 	}
 ]
 
 sequel.createTableSync('cities', data)
 
+// sequel.query.each('SELECT * FROM cities WHERE 15 != ALL (temp)', function(row){
+// 	console.log(row)
+// })
+
 sequel.query.each('SELECT * FROM cities', function(row){
 	console.log(row)
 })
+
+
+// sequel.query.each('SELECT * FROM cities WHERE 15 = ANY (temp)', function(row){
+// 	console.log(row)
+// })
 

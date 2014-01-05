@@ -1,3 +1,3 @@
-#Sequel
+# pg sequel
 
-A simple wrapper around [sqlite3](https://github.com/mapbox/node-sqlite3) to easily create and query a table from a local json or csv file.
+A wrapper around [node-postgres](https://github.com/brianc/node-postgres) to easily create and query a table from a local json or csv file.

@@ -18,11 +18,11 @@ var helpers = {
 					return 'json'
 				}
 				if (typeof value[0] == 'string'){
-					console.log('text_arr')
 					return 'text[]'
 				}
-					console.log('int_arr')
 				return 'integer[]'
+			}else{
+				return 'json'
 			}
 		}
 	},
@@ -45,6 +45,8 @@ var helpers = {
 				var arr_holder = []
 				arr_holder = helpers.prepValuesForInsert(arr_holder, value, '"');
 				holder.push("'{" + arr_holder + "}'");
+			} else if (_.isObject(value)){
+				holder.push(quote_char + JSON.stringify(value) + quote_char)
 			}
 		})
 		return holder.join(',')
@@ -57,10 +59,12 @@ var helpers = {
 			val_arr.push('(' + helpers.prepValuesForInsert([], data[i]) + ')');
 		}
 		stmt += val_arr.join(',');
+		console.log(stmt)
 		return stmt;
 	}
 }
 
+// '{"title":"right"}'
 
 
 function addTable(tn){
@@ -81,7 +85,6 @@ function handleError(err){
 
 function createTableCommands(table_name, table_data, cb){
 	client.query('CREATE TEMP TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + helpers.describeColumns(table_data) + ')');
-
 	var stmt = helpers.assembleValueInsertString(table_name, table_data);
   client.query(stmt)
 }

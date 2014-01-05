@@ -1,7 +1,7 @@
 {
-  "name": "sequel",
+  "name": "pg-sequel",
   "version": "0.1.0",
-  "description": "A wrapper around sqlite3 to create a table from a json object.",
+  "description": "A wrapper around node-postgres to create a table from a json object.",
   "main": "sequel.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,6 +23,6 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "underscore": ">=1.5.2",
-    "sqlite3": "~2.1.19"
+    "pg": "~2.10.0"
   }
 }
