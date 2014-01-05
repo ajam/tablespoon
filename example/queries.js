@@ -2,7 +2,7 @@ var sequel = require('../sequel.js').connect('pg://mike@localhost/node');
 
 var data = [
 	{
-		city: 'New York',
+		city: "New York's",
 		temp: [0,35],
 		country: 'USA'
 	},

@@ -31,15 +31,20 @@ var helpers = {
 		var arr_holder = []; // In case your value is an array, you'll want to run this function recursively to properly quote its values.
 		if (!quote_char) {quote_char = '\''}
 		_.values(data_row).forEach(function(value){
-			if (typeof value == 'string'){
-				holder.push(quote_char + value + quote_char)
-			} else if (typeof value == 'number'){
+			if (_.isString(value)){
+				// Add `E` to escape
+				holder.push('E' + quote_char + value.replace(/"/g, '\\\"').replace(/'/g, '\\\'') + quote_char)
+			} else if (_.isUndefined(value) || _.isNull(value) || _.isNaN(value)){
+				holder.push('NULL')
+			} else if (_.isNumber(value)){
 				holder.push(value)
 			} else if (_.isArray(value)){
 				arr_holder = helpers.prepValuesForInsert(arr_holder, value, '"');
 				holder.push("'{" + arr_holder + "}'");
 			} else if (_.isObject(value)){
 				holder.push(quote_char + JSON.stringify(value) + quote_char)
+			} else if (_.isBoolean){
+				holder.push(value)
 			}
 		})
 		return holder.join(',');
@@ -53,8 +58,13 @@ var helpers = {
 		stmt += val_arr.join(',');
 		return stmt;
 	},
-	handleErr: function(err, msg){
-		if (err){ return console.error('Error in ' + msg + ':', err)	}
+	handleErr: function(err, msg, qt){
+		var pos;
+		if (err){ 
+			pos = Number(err.position);
+			if (qt) {qt = 'QUERY EXCERPT:\n' + qt.substr(Math.max(pos - 50), 50) + '^' + qt.substr(pos, 50)} // Display the area where the query threw an error marked by a `^`. If the error occurs within the first fifty characters, make it start at the beginning of the string.
+			return console.error(qt,'\n\nError in ' + msg + ':', err)	
+		}
 	}
 }
 
@@ -67,11 +77,14 @@ function connectToDb(){
 }
 
 function createTableCommands(table_name, table_data, cb){
-	client.query('CREATE TEMP TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + helpers.describeColumns(table_data) + ')', function(err, result){
-  	helpers.handleErr(err, 'table creation')
+	var create_table_text = 'CREATE TEMP TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + helpers.describeColumns(table_data) + ')';
+	client.query(create_table_text, function(err, result){
+  	helpers.handleErr(err, 'table creation', create_table_text)
 	});
 	var stmt = helpers.assembleValueInsertString(table_name, table_data);
-  client.query(stmt);
+  client.query(stmt, function(err, result){
+  	helpers.handleErr(err, 'row insertion', stmt)
+  });
 }
 
 function createTableSync(table_name, table_data){
