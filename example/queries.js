@@ -3,27 +3,27 @@ var sequel = require('../sequel.js')
 var data = [
 	{
 		city: 'New York',
-		temp: {temp:5},
+		temp: {temp:[5,2]},
 		country: 'USA'
 	},
 	{
 		city: 'Los Angeles',
-		temp: {temp:5},
+		temp: {temp:[5,2]},
 		country: 'USA'
 	},
 	{
 		city: 'Paris',
-		temp: {temp:5},
+		temp: {temp:[5,2]},
 		country: 'France'
 	},
 	{
 		city: 'Marseille',
-		temp: {temp:5},
+		temp: {temp:[5,2]},
 		country: 'France'
 	},
 	{
 		city: 'London',
-		temp: {temp: 2},
+		temp: {temp:[2,2]},
 		country: 'UK'
 	}
 ]
