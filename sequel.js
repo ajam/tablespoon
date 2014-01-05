@@ -3,7 +3,7 @@ var _           = require('underscore'),
 
 var client,
 		tables = [],
-		conString = "postgres://mike:5432@localhost/postgres";
+		conString = "pg://default_user:5432@localhost/postgres";
 
 var helpers = {
 	sqlizeType: function(type, value){
@@ -25,7 +25,7 @@ var helpers = {
 			var row_info = key + ' ' + helpers.sqlizeType(typeof value, value);
 			columns.push(row_info)
 		});
-		return columns.join(',')
+		return columns.join(',');
 	},
 	prepValuesForInsert: function(holder, data_row, quote_char){
 		var arr_holder = []; // In case your value is an array, you'll want to run this function recursively to properly quote its values.
@@ -42,12 +42,11 @@ var helpers = {
 				holder.push(quote_char + JSON.stringify(value) + quote_char)
 			}
 		})
-		return holder.join(',')
+		return holder.join(',');
 	},
 	assembleValueInsertString: function(table_name, data){
-	  var stmt ='INSERT INTO ' + table_name + ' (' + _.keys(data[0]).join(',') + ') VALUES ';
-
-	  var val_arr = [];
+	  var stmt ='INSERT INTO ' + table_name + ' (' + _.keys(data[0]).join(',') + ') VALUES ',
+	      val_arr = [];
 		for (var i = 0; i < data.length; i++){
 			val_arr.push('(' + helpers.prepValuesForInsert([], data[i]) + ')');
 		}
@@ -60,22 +59,19 @@ var helpers = {
 }
 
 function connectToDb(){
-	client = client || new Client('pg://mie:5432@localhost/postgres'); //will use defaults
+	client = client || new Client(conString);
   client.on('drain', client.end.bind(client)); //disconnect client when all queries are finished
 	client.connect(function(err){
-  	helpers.handleErr(err, 'database connection')
+  	helpers.handleErr(err, 'database connection');
 	});
 }
-
-
-
 
 function createTableCommands(table_name, table_data, cb){
 	client.query('CREATE TEMP TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + helpers.describeColumns(table_data) + ')', function(err, result){
   	helpers.handleErr(err, 'table creation')
 	});
 	var stmt = helpers.assembleValueInsertString(table_name, table_data);
-  client.query(stmt)
+  client.query(stmt);
 }
 
 function createTableSync(table_name, table_data){
@@ -86,13 +82,13 @@ function createTableSync(table_name, table_data){
 function query(query_text, cb){
   client.query(query_text, function(err, result){
   	helpers.handleErr(err, 'query "' + query_text + '"')
-  	cb(result.rows)
+  	cb(result.rows);
   })
 }
 query.each = function(query_text, cb){
 	var query = client.query(query_text);
   query.on('row', function(row, result){
-  	cb(row)
+  	cb(row);
   })
 }
 
@@ -101,6 +97,10 @@ query.each = function(query_text, cb){
 module.exports = {
 	// createTable: createTable,
 	createTableSync: createTableSync,
-	query: query
+	query: query,
+	connect: function(connection_string){
+		conString = connection_string;
+		return this;
+	}
 }
 
