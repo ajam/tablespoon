@@ -23,7 +23,7 @@ var data = [
 	},
 	{
 		city: 'London',
-		temp: [2,25],
+		temp: [2,25, 32],
 		country: 'UK'
 	}
 ]

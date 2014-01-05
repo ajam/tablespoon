@@ -3,7 +3,8 @@ var _           = require('underscore'),
 
 var client,
 		tables = [],
-		conString = "pg://default_user:5432@localhost/postgres";
+		conString = "pg://default_user:5432@localhost/postgres",
+		err_preview_length = 100;
 
 var helpers = {
 	sqlizeType: function(type, value){
@@ -28,19 +29,20 @@ var helpers = {
 		return columns.join(',');
 	},
 	prepValuesForInsert: function(holder, data_row, quote_char){
-		var arr_holder = []; // In case your value is an array, you'll want to run this function recursively to properly quote its values.
-		if (!quote_char) {quote_char = '\''}
+		var arr_holder; // In case your value is an array, you'll want to run this function recursively to properly quote its values.
+		if (!quote_char) {quote_char = '$$'}
 		_.values(data_row).forEach(function(value){
 			if (_.isString(value)){
 				// Add `E` to escape
-				holder.push('E' + quote_char + value.replace(/"/g, '\\\"').replace(/'/g, '\\\'') + quote_char)
+				holder.push(quote_char + value + quote_char)
 			} else if (_.isUndefined(value) || _.isNull(value) || _.isNaN(value)){
 				holder.push('NULL')
 			} else if (_.isNumber(value)){
 				holder.push(value)
 			} else if (_.isArray(value)){
+				arr_holder = [];
 				arr_holder = helpers.prepValuesForInsert(arr_holder, value, '"');
-				holder.push("'{" + arr_holder + "}'");
+				holder.push(quote_char + "{" + arr_holder + "}" + quote_char);
 			} else if (_.isObject(value)){
 				holder.push(quote_char + JSON.stringify(value) + quote_char)
 			} else if (_.isBoolean){
@@ -63,7 +65,7 @@ var helpers = {
 				err_text = 'Error in ' + msg;
 		if (err){ 
 			pos = Number(err.position);
-			if (qt) {err_text += ':\n' + qt.substr(Math.max(0, pos - 50), Math.min(pos, 50)) + '^' + qt.substr(pos, Math.min(qt.length - pos, 75)) + '\n\n'} // Display the area where the query threw an error marked by a `^`. If the error occurs within the first fifty characters, make it start at the beginning of the string.
+			if (qt) {err_text += ':\n' + qt.substr(Math.max(0, pos - err_preview_length), Math.min(pos, err_preview_length)) + '^' + qt.substr(pos, Math.min(qt.length - pos, err_preview_length)) + '\n\n'} // Display the area where the query threw an error marked by a `^`. If the error occurs within the first fifty characters, make it start at the beginning of the string.
 			console.error(err_text, err)	
 			throw err
 		}
@@ -116,6 +118,10 @@ module.exports = {
 	connect: function(connection_string){
 		conString = connection_string;
 		return this;
+	},
+	errLength: function(length){
+		err_preview_length = length;
+		return this
 	}
 }
 

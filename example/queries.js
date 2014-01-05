@@ -4,27 +4,27 @@ var data = [
 	{
 		city: "New York's",
 		temp: [0,35],
-		country: 'USA'
+		countries: ['USA', 'John\'s']
 	},
 	{
 		city: 'Los Angeles',
 		temp: [15,35],
-		country: 'USA'
+		countries: ['USA']
 	},
 	{
 		city: 'Paris',
 		temp: [2,33],
-		country: 'France'
+		countries: ['France']
 	},
 	{
 		city: 'Marseille',
 		temp: [5,27],
-		country: 'France'
+		countries: ['France']
 	},
 	{
-		city: 'London',
+		city: 'Donners\' Company',
 		temp: [2,25],
-		country: 'UK'
+		countries: ['UK']
 	}
 ]
 
