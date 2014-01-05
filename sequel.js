@@ -7,23 +7,16 @@ var client,
 
 var helpers = {
 	sqlizeType: function(type, value){
-
 		if (type == 'string'){
 			return 'text'
 		} else if (type == 'number'){
 			return 'integer'
 		} else if (type == 'object'){
 			if (_.isArray(value)){
-				if (_.isObject(value[0])){
-					return 'json'
-				}
-				if (typeof value[0] == 'string'){
-					return 'text[]'
-				}
-				return 'integer[]'
-			}else{
-				return 'json'
-			}
+				if (_.isObject(value[0]))       { return 'json'   } // If the arry's first child is an object, assume that it's an array of objects and thus json.
+				if (typeof value[0] == 'string'){ return 'text[]' } // If it's text, then assume it's a list of strings.
+				return 'integer[]'                                  // Otherwise, assume it's a list of integers. Sorry, no mixed type support.
+ 			}else { return 'json' }                               // If it's not an array, then it's an object and will be interpreted as json.
 		}
 	},
 	describeColumns: function(data){
@@ -59,32 +52,28 @@ var helpers = {
 			val_arr.push('(' + helpers.prepValuesForInsert([], data[i]) + ')');
 		}
 		stmt += val_arr.join(',');
-		console.log(stmt)
 		return stmt;
+	},
+	handleErr: function(err, msg){
+		if (err){ return console.error('Error in ' + msg + ':', err)	}
 	}
 }
 
-// '{"title":"right"}'
-
-
-function addTable(tn){
-	tables.push(tn)
-}
-
 function connectToDb(){
-	client = client || new Client('pg://mike:5432@localhost/postgres'); //will use defaults
+	client = client || new Client('pg://mie:5432@localhost/postgres'); //will use defaults
   client.on('drain', client.end.bind(client)); //disconnect client when all queries are finished
-	client.connect();
+	client.connect(function(err){
+  	helpers.handleErr(err, 'database connection')
+	});
 }
 
-function handleError(err){
-	if (err){ return console.error('Error:', err)	}
-}
 
 
 
 function createTableCommands(table_name, table_data, cb){
-	client.query('CREATE TEMP TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + helpers.describeColumns(table_data) + ')');
+	client.query('CREATE TEMP TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + helpers.describeColumns(table_data) + ')', function(err, result){
+  	helpers.handleErr(err, 'table creation')
+	});
 	var stmt = helpers.assembleValueInsertString(table_name, table_data);
   client.query(stmt)
 }
@@ -96,7 +85,7 @@ function createTableSync(table_name, table_data){
 
 function query(query_text, cb){
   client.query(query_text, function(err, result){
-  	handleError(err)
+  	helpers.handleErr(err, 'query "' + query_text + '"')
   	cb(result.rows)
   })
 }
