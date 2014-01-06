@@ -99,13 +99,13 @@ function createTableSync(table_name, table_data, table_schema){
 function query(query_text, cb){
   client.query(query_text, function(err, result){
   	helpers.handleErr(err, 'query', query_text)
-  	cb(result.rows);
+  	cb(result.rows, query_text);
   })
 }
 query.each = function(query_text, cb){
 	var query = client.query(query_text);
   query.on('row', function(row, result){
-  	cb(row);
+  	cb(row, query_text);
   })
 }
 
