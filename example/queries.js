@@ -2,29 +2,29 @@ var sequel = require('../sequel.js').connect('pg://mike@localhost/node');
 
 var data = [
 	{
-		city: "New York's",
+		city: "New York",
 		temp: [0,35],
-		countries: ['USA', 'John\'s']
+		country: 'USA'
 	},
 	{
 		city: 'Los Angeles',
 		temp: [15,35],
-		countries: ['USA']
+		country: 'USA'
 	},
 	{
 		city: 'Paris',
 		temp: [2,33],
-		countries: ['France']
+		country: 'France'
 	},
 	{
 		city: 'Marseille',
 		temp: [5,27],
-		countries: ['France']
+		country: 'France'
 	},
 	{
 		city: 'Donners\' Company',
 		temp: [2,25],
-		countries: ['UK']
+		country: 'UK'
 	}
 ]
 
@@ -32,7 +32,7 @@ sequel.createTableSync('cities', data)
 
 // Get the rows that don't have 15
 sequel.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
-	console.log(rows)
+	// console.log(rows)
 })
 
 // Get the one that does
