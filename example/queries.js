@@ -22,7 +22,7 @@ var data = [
 		country: 'France'
 	},
 	{
-		city: 'Donners\' Company',
+		city: 'London',
 		temp: [2,25],
 		country: 'UK'
 	}
@@ -36,6 +36,7 @@ sequel.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 })
 
 // Get the one that does
-sequel.query.each('SELECT * FROM cities WHERE 15 = ANY (temp)', function(row){
+sequel.query.each('SELECT * FROM cities WHERE 15 = ANY (temp)', function(row, query){
+	console.log(query)
 	console.log(row)
 })

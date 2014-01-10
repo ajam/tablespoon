@@ -1,29 +1,41 @@
 var _           = require('underscore'),
 		Client      = require('pg').Client;
 
+// TODO
+// Allow for smarter schema discovery: if current is row has null in that column, go to the next one
+// Only print `query` during .each on the first row, else print `''`
+// Maybe print query in verbose mode or something to make syntax nicer on callback
+// Put some defaults for finding where your pg server is located, default to postgres@localhost/butter_knife, then postgres@localhost/
+
 var client,
 		tables = [],
 		conString = "pg://default_user:5432@localhost/postgres",
 		err_preview_length = 100;
 
 var helpers = {
-	sqlizeType: function(type, value){
+	sqlizeType: function(type, value, key){
+		var err;
 		if (type == 'string'){
 			return 'text'
 		} else if (type == 'number'){
 			return 'integer'
+		} else if (value == null){ 
+			err = 'You have a null value in your sample data column "' + key + '", which makes it hard to know what type of sql column to make. Try manually defining your schema instead.'; 
+			throw err + '\n{ ' + key + ': ' + value + ' }' ;
 		} else if (type == 'object'){
 			if (_.isArray(value)){
 				if (_.isObject(value[0]))       { return 'json'   } // If the arry's first child is an object, assume that it's an array of objects and thus json.
 				if (typeof value[0] == 'string'){ return 'text[]' } // If it's text, then assume it's a list of strings.
 				return 'integer[]'                                  // Otherwise, assume it's a list of integers. Sorry, no mixed type support.
- 			} else { return 'json' }                               // If it's not an array, then it's an object and will be interpreted as json.
+ 			} else { return 'json' }                              // If it's not an array, then it's an object and will be interpreted as json.
+		} else if (type == 'boolean'){
+			return 'boolean'
 		}
 	},
 	describeColumns: function(data){
 		var columns = [];
 		_.each(data[0], function(value, key){
-			var row_info = key + ' ' + helpers.sqlizeType(typeof value, value);
+			var row_info = key + ' ' + helpers.sqlizeType(typeof value, value, key);
 			columns.push(row_info)
 		});
 		return columns.join(',');
@@ -47,6 +59,8 @@ var helpers = {
 				holder.push(quote_char + JSON.stringify(value) + quote_char)
 			} else if (_.isBoolean){
 				holder.push(value)
+			} else {
+				console.log('ERROR uncaught datatype', value, 'is', typeof value)
 			}
 		})
 		return holder.join(',');
@@ -91,7 +105,7 @@ function createTableCommands(table_name, table_data, table_schema, cb){
   });
 }
 
-function createTableSync(table_name, table_data, table_schema){
+function createTable(table_name, table_data, table_schema){
 	connectToDb();
 	createTableCommands(table_name, table_data, table_schema);
 }
@@ -112,8 +126,7 @@ query.each = function(query_text, cb){
 
 
 module.exports = {
-	// createTable: createTable,
-	createTableSync: createTableSync,
+	createTable: createTable,
 	query: query,
 	connect: function(connection_string){
 		conString = connection_string;
