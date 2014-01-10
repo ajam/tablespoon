@@ -116,6 +116,27 @@ function query(query_text, cb){
   	cb(result.rows, query_text);
   })
 }
+function queries(query_texts, cb){
+	var results = [],
+			counter = 0;
+
+	for (var i = 0; i < query_texts.length; i++){
+		(function(query_text){
+			var result_obj = {};
+		  client.query(query_text, function(err, result){
+		  	counter++;
+		  	helpers.handleErr(err, 'query', query_text)
+		  	result_obj.query = query_text;
+		  	result_obj.rows = result.rows;
+		  	results.push(result_obj);
+		  	if (counter == query_texts.length){
+			  	cb(results);
+		  	}
+		  })
+		})(query_texts[i])
+		
+	}
+}
 query.each = function(query_text, cb){
 	var query = client.query(query_text);
   query.on('row', function(row, result){
@@ -128,6 +149,7 @@ query.each = function(query_text, cb){
 module.exports = {
 	createTable: createTable,
 	query: query,
+	queries: queries,
 	connect: function(connection_string){
 		conString = connection_string;
 		return this;
