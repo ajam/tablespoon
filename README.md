@@ -44,7 +44,6 @@ bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 [ { uid: '1', city: 'New York',     temp: [ 0, 35 ], country: 'USA' },
   { uid: '3', city: 'Paris',        temp: [ 2, 33 ], country: 'France' },
   { uid: '4', city: 'Marseille',    temp: [ 5, 27 ], country: 'France' },
-  { uid: '5', city: 'London',       temp: [ 2, 25 ], country: 'UK' } ]
-*/
+  { uid: '5', city: 'London',       temp: [ 2, 25 ], country: 'UK' } ]*/
 })
 ````
