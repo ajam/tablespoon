@@ -1,4 +1,4 @@
-var sequel = require('../sequel.js').connect('pg://mike@localhost/node');
+var bk = require('../src/butter-knife.js').connect('pg://postgres@localhost/');
 
 var data = [
 	{
@@ -28,15 +28,15 @@ var data = [
 	}
 ]
 
-sequel.createTableSync('cities', data)
+bk.createTable('cities', data)
 
 // Get the rows that don't have 15
-sequel.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
-	// console.log(rows)
+bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
+	console.log(rows)
 })
 
 // Get the one that does
-sequel.query.each('SELECT * FROM cities WHERE 15 = ANY (temp)', function(row, query){
+bk.query.each('SELECT * FROM cities WHERE 15 = ANY (temp)', function(row, query){
 	console.log(query)
 	console.log(row)
 })
