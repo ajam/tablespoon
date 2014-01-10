@@ -1,14 +1,14 @@
 {
-  "name": "pg-sequel",
+  "name": "butter-knife",
   "version": "0.1.0",
   "description": "A wrapper around node-postgres to create a table from a json object.",
-  "main": "sequel.js",
+  "main": "src/butter-knife.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mhkeller/sequel.git"
+    "url": "https://github.com/ajam/butter-knife.git"
   },
   "keywords": [
     "sqlite",
