@@ -5,7 +5,7 @@ var _           = require('underscore'),
 // Only print `query` during .each on the first row, else print `''`
 // Maybe print query in verbose mode or something to make syntax nicer on callback
 // Put some defaults for finding where your pg server is located, default to postgres@localhost/butter_knife, then postgres@localhost/
-// A method for just creating commands either to console or to file
+// A method for just just inserting a file into postgres through node and through command line, temp table and not temp table.
 // Allow for option that creates a non temp table, and drops each time
 // Test date type
 // Make `bk.queries` example
