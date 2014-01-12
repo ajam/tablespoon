@@ -1,4 +1,4 @@
-var bk = require('../src/butter-knife.js').connect('pg://postgres@localhost/');
+var bk = require('../src/butterknife.js').connect('pg://postgres@localhost/');
 
 var data = [
 	{
@@ -28,7 +28,7 @@ var data = [
 	}
 ]
 
-// Define the table schema since the `null` in temp will cause errors otherwise. (to be fixed)
+// Define the table schema manually.
 var schema_string = 'city TEXT, temp integer[], country TEXT';
 
 bk.createTable('cities', data, schema_string)

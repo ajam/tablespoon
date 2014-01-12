@@ -1,4 +1,4 @@
-var bk = require('../src/butter-knife.js').connect('pg://postgres@localhost/');
+var bk = require('../src/butterknife.js').connect('pg://postgres@localhost/');
 
 var data = [
 	{
