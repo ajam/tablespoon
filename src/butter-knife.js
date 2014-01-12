@@ -7,6 +7,7 @@ var _           = require('underscore'),
 // Put some defaults for finding where your pg server is located, default to postgres@localhost/butter_knife, then postgres@localhost/
 // A method for just creating commands either to console or to file
 // Allow for option that creates a non temp table, and drops each time
+// Test date type
 
 var client,
 		tables = [],
@@ -21,10 +22,10 @@ var helpers = {
 		} else if (_.isNumber(value)){
 			return 'integer'
 		} else if (_.isArray(value)){
-				if (_.isObject(value[0])) { return 'json'   } // If the array's first child is an object, assume that it's an array of objects and thus json.
-				if (_.isArray( value[0])) { return 'text[]' } // If it's text, then assume it's a list of strings.
-				if (_.isNumber(value[0])) { return 'integer[]' } // If it's text, then assume it's a list of strings.
-				if (_.isDate(  value[0])) { return 'date[]' } // If it's text, then assume it's a list of strings.
+				if (_.isObject(value[0])) { return 'json'   }    // If the array's first child is an object, assume that it's an array of objects and thus json.
+				if (_.isArray( value[0])) { return 'text[]' }    // If it's text, then assume it's a list of strings.
+				if (_.isNumber(value[0])) { return 'integer[]' } // If it's a number then integers
+				if (_.isDate(  value[0])) { return 'date[]' }    // If date then dates. Unclear if this works
 		} else if (_.isBoolean(value)){
 			return 'boolean'
 		} else if (_.isObject(value)){
