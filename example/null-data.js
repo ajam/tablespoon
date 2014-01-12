@@ -8,22 +8,22 @@ var data = [
 	},
 	{
 		city: 'Los Angeles',
-		temp: null,
+		temp: [15,35],
 		country: 'USA'
 	},
 	{
 		city: 'Paris',
-		temp: null,
+		temp: [2,33],
 		country: 'France'
 	},
 	{
 		city: 'Marseille',
-		temp: null,
+		temp: [5,27],
 		country: 'France'
 	},
 	{
 		city: 'London',
-		temp: null,
+		temp: [2,25, 32],
 		country: 'UK'
 	}
 ]
