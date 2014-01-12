@@ -8,6 +8,7 @@ var _           = require('underscore'),
 // A method for just creating commands either to console or to file
 // Allow for option that creates a non temp table, and drops each time
 // Test date type
+// Make `bk.queries` example
 
 var client,
 		tables = [],
@@ -85,7 +86,7 @@ var helpers = {
 				holder.push(value)
 			} else {
 				console.log('ERROR uncaught datatype', value, 'is', typeof value)
-			}
+			} // Insert date support here.
 		})
 		return holder.join(',');
 	},
