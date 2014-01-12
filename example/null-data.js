@@ -31,6 +31,6 @@ var data = [
 bk.createTable('cities', data)
 
 bk.query('SELECT * FROM cities', function(rows){
-	// console.log(rows)
+	console.log(rows)
 })
 
