@@ -2,7 +2,6 @@ var _           = require('underscore'),
 		Client      = require('pg').Client;
 
 // TODO
-// Allow for smarter schema discovery: if current is row has null in that column, go to the next one
 // Only print `query` during .each on the first row, else print `''`
 // Maybe print query in verbose mode or something to make syntax nicer on callback
 // Put some defaults for finding where your pg server is located, default to postgres@localhost/butter_knife, then postgres@localhost/
@@ -15,39 +14,61 @@ var client,
 		err_preview_length = 100;
 
 var helpers = {
-	sqlizeType: function(type, value, key){
+	sqlizeType: function(value, key, data, i){
 		var err;
-		if (type == 'string'){
+		if (_.isString(value)){
 			return 'text'
-		} else if (type == 'number'){
+		} else if (_.isNumber(value)){
 			return 'integer'
-		} else if (value == null){ 
-			err = 'You have a null value in your sample data column "' + key + '", which makes it hard to know what type of sql column to make. Try manually defining your schema instead.'; 
-			throw err + '\n{ ' + key + ': ' + value + ' }' ;
-		} else if (type == 'object'){
-			if (_.isArray(value)){
-				if (_.isObject(value[0]))       { return 'json'   } // If the arry's first child is an object, assume that it's an array of objects and thus json.
-				if (typeof value[0] == 'string'){ return 'text[]' } // If it's text, then assume it's a list of strings.
-				return 'integer[]'                                  // Otherwise, assume it's a list of integers. Sorry, no mixed type support.
- 			} else { return 'json' }                              // If it's not an array, then it's an object and will be interpreted as json.
-		} else if (type == 'boolean'){
+		} else if (_.isArray(value)){
+				if (_.isObject(value[0])) { return 'json'   } // If the array's first child is an object, assume that it's an array of objects and thus json.
+				if (_.isArray( value[0])) { return 'text[]' } // If it's text, then assume it's a list of strings.
+				if (_.isNumber(value[0])) { return 'integer[]' } // If it's text, then assume it's a list of strings.
+				if (_.isDate(  value[0])) { return 'date[]' } // If it's text, then assume it's a list of strings.
+		} else if (_.isBoolean(value)){
 			return 'boolean'
+		} else if (_.isObject(value)){
+			return 'json'
+		} else if (_.isDate(value)){
+			return 'date'
+		} else if ((_.isNull(value) || _.isUndefined(value)) ){ 
+			if (i < data.length - 1 ){ return null } // If it's not the last row then continue processing other rows. Else...
+			err = 'Your column "' + key + '" doesn\'t contain any values. Please include a value in at least one row. Or, manually define your schema instead.'; 
+			throw err + '\n{ ' + key + ': ' + value + ' }';
 		}
 	},
+	describeColumn: function(columns, data, i){
+		_.each(data[i], function(value, key){
+			if (!columns[key]){
+				columns[key] = helpers.sqlizeType(value, key, data, i)
+			}
+		})
+		return columns
+	},
 	describeColumns: function(data){
-		var columns = [];
-		_.each(data[0], function(value, key){
-			var row_info = key + ' ' + helpers.sqlizeType(typeof value, value, key);
-			columns.push(row_info)
-		});
-		return columns.join(',');
+		var columns = {},
+				i = 0;
+		this.describeColumn(columns, data, i)
+		// If there are null values for that object, then try the next object
+		while (_.values(columns).indexOf(null) != -1){
+			i++
+			this.describeColumn(columns, data, i)
+		}
+		return columns
+	},
+	columnTypesToString: function(data){
+		var columns = this.describeColumns(data),
+				column_types = [];
+		_.each(columns, function(value, key){
+			column_types.push(key + ' ' + value)
+		})
+		return column_types.join(',')
 	},
 	prepValuesForInsert: function(holder, data_row, quote_char){
-		var arr_holder; // In case your value is an array, you'll want to run this function recursively to properly quote its values.
+		var arr_holder; // In case your value is an array, run this function recursively to properly quote its values.
 		if (!quote_char) {quote_char = '$$'}
 		_.values(data_row).forEach(function(value){
 			if (_.isString(value)){
-				// Add `E` to escape
 				holder.push(quote_char + value + quote_char)
 			} else if (_.isUndefined(value) || _.isNull(value) || _.isNaN(value)){
 				holder.push('NULL')
@@ -97,7 +118,7 @@ function connectToDb(){
 }
 
 function createTableCommands(table_name, table_data, table_schema, cb){
-	var create_table_text = 'CREATE TEMP TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.describeColumns(table_data)) + ')';
+	var create_table_text = 'CREATE TEMP TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.columnTypesToString(table_data)) + ')';
 	client.query(create_table_text, function(err, result){
   	helpers.handleErr(err, 'table creation', create_table_text)
 	});
@@ -145,8 +166,6 @@ query.each = function(query_text, cb){
   	cb(row, query_text);
   })
 }
-
-
 
 module.exports = {
 	createTable: createTable,

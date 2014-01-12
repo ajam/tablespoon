@@ -32,6 +32,7 @@ bk.createTable('cities', data)
 
 // Get the rows that don't have 15
 bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
+	console.log(query)
 	console.log(rows)
 	/*[
 	  { uid: '1', city: 'New York',     temp: [ 0, 35 ], country: 'USA' },

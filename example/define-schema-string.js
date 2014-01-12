@@ -31,7 +31,7 @@ var data = [
 // Define the table schema since the `null` in temp will cause errors otherwise. (to be fixed)
 var schema_string = 'city TEXT, temp integer[], country TEXT';
 
-sequel.createTableSync('cities', data, schema_string)
+bk.createTable('cities', data, schema_string)
 
 // Get the rows that don't have 15
 bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
