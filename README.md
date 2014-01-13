@@ -160,7 +160,7 @@ Optionally:
 #### Query a data file
 
 * Specify the `IN_FILE` with `-i`. 
-* Specify the query with `-q`, e.g. `-q "SELECT * FROM butterknife;"
+* Specify the query with `-q`, e.g. `-q "SELECT * FROM butterknife;"`
 
 Optionally:
 
@@ -185,7 +185,7 @@ Optionally:
 
 #### Query an existing PostgreSQL table
 
-* Specify the query with `-q`, e.g. `-q "SELECT * FROM butterknife;"
+* Specify the query with `-q`, e.g. `-q "SELECT * FROM butterknife;"`
 
 Optionally:
 
