@@ -1,4 +1,4 @@
-# Butter Knife
+# Butterknife
 
 A wrapper around [node-postgres](https://github.com/brianc/node-postgres) to easily create and query a table from a local json or csv file.
 
@@ -140,11 +140,9 @@ bk.queries(queries, function(result){
 
 ## Command line
 
-````
-butterknife -i IN_FILE -f (csv|json|tsv|psv|DELIMITER) -n TABLE_NAME -o OUT_FILE -q "QUERY" -s "SCHEMA -m (create)"
-````
+`butterknife -i IN_FILE -f (csv|json|tsv|psv|DELIMITER) -n TABLE_NAME -o OUT_FILE -q "QUERY" -s "SCHEMA -m (create)"`
 
-__Note: All commands on the database are run with `CREATE TEMP TABLE` so as not to alter your existing PostgreSQL tables. Only if you specify `-m create` will a table be added to your database outside of this query session. To delete a table, run `butterknife -q "DROP TABLE <table_name>";`
+__Note: All commands on the database are run with `CREATE TEMP TABLE` so as not to alter your existing PostgreSQL tables.__ Only if you specify `-m create` will a table be added to your database outside of this query session. To delete a table, run `butterknife -q "DROP TABLE <table_name>;"`
 
 ### So you want to..
 
@@ -199,6 +197,6 @@ Optionally:
 
 Butterknife defaults to the database at `pg://postgres:5432@localhost`, which gives it acess to the main database of your PostgreSQL installation. In order to better sandbox your Butterknife projects, you might want to create a separate database called `butterknife`. To do this, log into psql by running `psql` on the command line and run `CREATE DATABASE butterknife`. 
 
-Then specify your default connection in `config.txt` to pg://postgres:5432@localhost/butterknife`. To override this, you can set `bk.connect(<new_connection_string>)` when using Butterknife through nodejs or through `-c <new_connection_string>` through the command line.
+Then specify your default connection in `config.txt` to `pg://postgres:5432@localhost/butterknife`. To override this, you can set `bk.connect(<new_connection_string>)` when using Butterknife through nodejs or through `-c <new_connection_string>` through the command line.
 
 You could also obviously set up a different user as well if you don't want to give Butterknife root access. If you have a user called, `mike` that owns a database `butterknife`, your connection string would be `pg://mike:5432@localhost/butterknife`
