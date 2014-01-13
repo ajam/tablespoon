@@ -34,8 +34,9 @@ var schema_string = 'city TEXT, temp integer[], country TEXT';
 bk.createTable('cities', data, schema_string)
 
 // Get the rows that don't have 15
-bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
-	console.log(rows)
+bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(result){
+	console.log(result.query)
+	console.log(result.rows)
 	/*[
 	  { uid: '1', city: 'New York',     temp: [ 0, 35 ], country: 'USA' },
 	  { uid: '3', city: 'Paris',        temp: [ 2, 33 ], country: 'France' },
@@ -44,8 +45,7 @@ bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 })
 
 // Get the one that does
-bk.query.each('SELECT * FROM cities WHERE 15 = ANY (temp)', function(row, query){
-	console.log(query)
+bk.query.each('SELECT * FROM cities WHERE 15 = ANY (temp)', function(row){
 	console.log(row)
 	/*
 	SELECT * FROM cities WHERE 15 = ANY (temp)

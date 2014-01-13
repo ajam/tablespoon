@@ -12,7 +12,7 @@ var _           = require('underscore'),
 
 var client,
 		tables = [],
-		conString = "pg://default_user:5432@localhost/postgres",
+		conString = "pg://postgres:5432@localhost",
 		err_preview_length = 100;
 
 var helpers = {
@@ -136,9 +136,12 @@ function createTable(table_name, table_data, table_schema){
 }
 
 function query(query_text, cb){
+	var result_obj = {}
   client.query(query_text, function(err, result){
   	helpers.handleErr(err, 'query', query_text)
-  	cb(result.rows, query_text);
+  	result_obj.query = query_text;
+  	result_obj.rows  = result.rows
+  	cb(result_obj);
   })
 }
 function queries(query_texts, cb){
