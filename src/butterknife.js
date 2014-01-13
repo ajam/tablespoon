@@ -14,7 +14,8 @@ var client,
 		tables = [],
 		conString = "pg://postgres:5432@localhost",
 		err_preview_length = 100,
-		table_type = 'TEMP ';
+		table_type = 'TEMP ',
+		connected = false;
 
 var helpers = {
 	sqlizeType: function(value, key, data, i){
@@ -112,12 +113,14 @@ var helpers = {
 	}
 }
 
-function connectToDb(){
-	client = client || new Client(conString);
+function connectToDb(connection_string){
+	connection_string = connection_string || conString;
+	client = client || new Client(connection_string);
   client.on('drain', client.end.bind(client)); //disconnect client when all queries are finished
 	client.connect(function(err){
   	helpers.handleErr(err, 'database connection');
 	});
+	connected = true;
 }
 
 function createTableCommands(table_name, table_data, table_schema){
@@ -136,8 +139,8 @@ function createAndInsert(table_commands){
   });
 }
 
-function connectCreateTable(table_name, table_data, table_schema){
-	connectToDb();
+function createTable(table_name, table_data, table_schema){
+	if (!connected) connectToDb();
 	var table_commands = createTableCommands(table_name, table_data, table_schema);
 	createAndInsert(table_commands);
 }
@@ -180,12 +183,12 @@ query.each = function(query_text, cb){
 }
 
 module.exports = {
-	createTable: connectCreateTable,
+	createTable: createTable,
 	query: query,
 	queries: queries,
 	createTableCommands: createTableCommands,
 	connect: function(connection_string){
-		conString = connection_string;
+		connectToDb(connection_string);
 		return this;
 	},
 	errLength: function(length){
