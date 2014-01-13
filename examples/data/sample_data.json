@@ -1,0 +1,27 @@
+[
+	{
+		"city": "New York",
+		"temp": 23,
+		"country": "USA"
+	},
+	{
+		"city": "Los Angeles",
+		"temp": 43,
+		"country": "USA"
+	},
+	{
+		"city": "Paris",
+		"temp": 12,
+		"country": "France"
+	},
+	{
+		"city": "Marseille",
+		"temp": 20,
+		"country": "France"
+	},
+	{
+		"city": "London",
+		"temp": 28,
+		"country": "UK"
+	}
+]

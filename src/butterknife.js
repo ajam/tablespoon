@@ -13,7 +13,8 @@ var _           = require('underscore'),
 var client,
 		tables = [],
 		conString = "pg://postgres:5432@localhost",
-		err_preview_length = 100;
+		err_preview_length = 100,
+		table_type = 'TEMP ';
 
 var helpers = {
 	sqlizeType: function(value, key, data, i){
@@ -119,20 +120,26 @@ function connectToDb(){
 	});
 }
 
-function createTableCommands(table_name, table_data, table_schema, cb){
-	var create_table_text = 'CREATE TEMP TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.columnTypesToString(table_data)) + ')';
-	client.query(create_table_text, function(err, result){
-  	helpers.handleErr(err, 'table creation', create_table_text)
+function createTableCommands(table_name, table_data, table_schema){
+	var table_commands = {};
+	table_commands.create = 'CREATE ' + table_type + 'TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.columnTypesToString(table_data)) + ')';
+	table_commands.insert = helpers.assembleValueInsertString(table_name, table_data);
+	return table_commands;
+}
+
+function createAndInsert(table_commands){
+	client.query(table_commands.create, function(err, result){
+  	helpers.handleErr(err, 'table creation', table_commands.create)
 	});
-	var stmt = helpers.assembleValueInsertString(table_name, table_data);
-  client.query(stmt, function(err, result){
-  	helpers.handleErr(err, 'row insertion', stmt)
+  client.query(table_commands.insert, function(err, result){
+  	helpers.handleErr(err, 'row insertion', table_commands.insert)
   });
 }
 
-function createTable(table_name, table_data, table_schema){
+function connectCreateTable(table_name, table_data, table_schema){
 	connectToDb();
-	createTableCommands(table_name, table_data, table_schema);
+	var table_commands = createTableCommands(table_name, table_data, table_schema);
+	createAndInsert(table_commands);
 }
 
 function query(query_text, cb){
@@ -173,15 +180,20 @@ query.each = function(query_text, cb){
 }
 
 module.exports = {
-	createTable: createTable,
+	createTable: connectCreateTable,
 	query: query,
 	queries: queries,
+	createTableCommands: createTableCommands,
 	connect: function(connection_string){
 		conString = connection_string;
 		return this;
 	},
 	errLength: function(length){
 		err_preview_length = length;
+		return this
+	},
+	temp: function(type){
+		if (!type) table_type = '';
 		return this
 	}
 }
