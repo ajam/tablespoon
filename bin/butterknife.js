@@ -3,12 +3,10 @@
 var fs = require('fs'),
 		bk = require('../src/butterknife.js'),
 		optimist = require('optimist'),
-		dsv = require('dsv'),
-		exec = require('child_process').exec,
-		sys = require('sys');
+		dsv = require('dsv');
 
 var argv = optimist
-  .usage('Usage: butterknife IN_FILE -f (json|csv|dsv) -n TABLE_NAME -m (TEMP|PERM) -d (\'\t\'|\'|\') -o OUT_FILE -q \"QUERY\" -of (JSON|CSV)')
+  .usage('Usage: butterknife IN_FILE -f (json|csv|dsv) -n TABLE_NAME -m (temp|perm) -d (\'\t\'|\'|\') -o OUT_FILE -q \"QUERY\" -of (json|csv) -s SCHEMA')
   .options('h', {
     alias: 'help',
     describe: 'Display help',
@@ -41,13 +39,18 @@ var argv = optimist
   })
   .options('q', {
     alias: 'query',
-    describe: 'Query text',
+    describe: 'Query text. Must be quoted',
     default: false
   })
   .options('of', {
     alias: 'out_format',
     describe: 'Format of output file, CSV or JSON',
     default: 'JSON'
+  })
+  .options('s', {
+    alias: 'schema',
+    describe: 'Manually define a table schema. Must be quoted',
+    default: null
   })
   .check(function(argv) {
     if (argv._.length < 1) throw new Error('IN_File must be specified.');
@@ -57,13 +60,14 @@ var argv = optimist
 if (argv.h || argv.help) return optimist.showHelp();
 
 var in_file      = fs.readFileSync('./' + argv._[0]),
- 		format       = argv.f || argv['format'],
-		table_name   = argv.n || argv['name'],
-		mode         = argv.m.toUpperCase() || argv['mode'.toUpperCase()],
- 		delimiter    = argv.d || argv['delimiter'],
- 		out_file     = argv.o || argv['out'],
- 		query_text   = argv.q || argv['query'],
+ 		format       = argv.f  || argv['format'],
+		table_name   = argv.n  || argv['name'],
+		mode         = argv.m  || argv['mode'],
+ 		delimiter    = argv.d  || argv['delimiter'],
+ 		out_file     = argv.o  || argv['out'],
+ 		query_text   = argv.q  || argv['query'],
  		out_format   = argv.of || argv['out_format'],
+ 		schema       = argv.s  || argv['schema'],
  		parser;
 
 if (format == 'json'){
@@ -80,10 +84,9 @@ if (mode == 'PERM') {
 }
 
 function writeQuery(result){
-	out_format = out_format.toUpperCase()
-	if (out_format == 'JSON'){
+	if (out_format == 'json'){
 		fs.writeFileSync(out_file, JSON.stringify(result))
-	} else if (out_format == 'CSV'){
+	} else if (out_format == 'csv'){
 		fs.writeFileSync(out_file, dsv.csv.format(result))
 	}
 }
@@ -92,7 +95,7 @@ var commands_obj,
 		commands    
 
 if (query_text){
-	bk.createTable(table_name, in_file)
+	bk.createTable(table_name, in_file, schema)
 	bk.query(query_text, function(result){
 		if (!out_file){
 			console.log(result)
@@ -101,7 +104,7 @@ if (query_text){
 		}
 	})
 }else{
-	commands_obj = bk.createTableCommands(table_name, in_file);
+	commands_obj = bk.createTableCommands(table_name, in_file, schema);
 	commands     = commands_obj.create + ' ' + commands_obj.insert;
 	if (!out_file){
 		console.log(commands)
