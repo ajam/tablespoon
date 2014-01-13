@@ -55,15 +55,15 @@ bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 
 #### Methods
 
-__connect__ .connect(database_connection_string)
+__connect__ _.connect(dbConnectionString)_
 
 Connects Butterknife to your PostgreSQL database. Connection defaults to `pg://postgres:5432@localhost/` and can be configured through `db_config.txt`. Read more about database connections.
 
-__createTable__ .createTable(table_name, data_object)
+__createTable__ _.createTable(tablename, dataobject)_
 
 Syncronously creates a table in your PostgreSQL database
 
-__query__ .query(query_text, function)
+__query__ _.query(queryString, function)_
 
 Queries the database and returns a json object with the query text and the resulting rows.
 
@@ -81,7 +81,7 @@ bk.query('SELECT * FROM cities LIMIT 2', function(result){
 })
 ````
 
-__query.each__ .query.each(query_text, function)
+__query.each__ _.query.each(queryString, function)_
 
 Same as `.query` except it returns the resulting rows one by one.
 
@@ -95,7 +95,7 @@ bk.query.each('SELECT * FROM cities LIMIT 2', function(row){
 })
 ````
 
-__queries__ .queries(list, function)
+__queries__ _.queries(list, function)_
 
 Takes a list of query strings, processes them synchronously and returns them in an array of objects. Each object has the same structure as the result object from `.query`
 ````
