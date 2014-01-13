@@ -6,7 +6,7 @@ var fs = require('fs'),
 		dsv = require('dsv');
 
 var argv = optimist
-  .usage('Usage: butterknife -i IN_FILE -f (csv|json|tsv|psv|DELIMITER) -n TABLE_NAME -o OUT_FILE -q "QUERY" -p (json|csv) -s "SCHEMA"')
+  .usage('Usage: butterknife -i IN_FILE -f (csv|json|tsv|psv|DELIMITER) -n TABLE_NAME -o OUT_FILE -q "QUERY" -s "SCHEMA" -m (temp|create) -c DB_CONNECTION')
   .options('h', {
     alias: 'help',
     describe: 'Display help',
@@ -25,13 +25,13 @@ var argv = optimist
   .options('n', {
     alias: 'name',
     describe: 'Table name',
-    default: 'butter_knife'
+    default: 'butterknife'
   })
-  // .options('m', {
-  //   alias: 'mode',
-  //   describe: 'Table mode, either temporary, `temp`, or permanent table, `perm`.',
-  //   default: 'temp'
-  // })
+  .options('m', {
+    alias: 'mode',
+    describe: 'Table mode, either use a temporary table (`temp`) or create a permanent table (`create`).',
+    default: 'temp'
+  })
   .options('o', {
     alias: 'out',
     describe: 'Out file',
@@ -42,15 +42,15 @@ var argv = optimist
     describe: 'Query text. Must be quoted',
     default: false
   })
-  .options('p', {
-    alias: 'output_format',
-    describe: 'Format of output file, csv or json',
-    default: 'json'
-  })
   .options('s', {
     alias: 'schema',
     describe: 'Manually define a table schema. Must be quoted',
     default: null
+  })
+  .options('c', {
+    alias: 'connection',
+    describe: 'Your postgres database location.',
+    default: 'pg://postgres:5432@localhost'
   })
   .check(function(argv) {
     if ( (argv['i'] || argv['in_file']) && (argv.q  || argv['query'])) throw new Error('What do you want to do?');
@@ -67,7 +67,8 @@ var file_name    = argv['i'] || argv['in_file'],
  		out_file     = argv.o  || argv['out'],
  		query_text   = argv.q  || argv['query'],
  		out_format   = argv.of || argv['out_format'],
- 		schema       = argv.s  || argv['schema'];
+ 		schema       = argv.s  || argv['schema'],
+ 		connection   = argv.c  || argv['connection'];
 
 function discernFormat(file_name){
 	var name_arr = file_name.split('\.')
@@ -76,6 +77,7 @@ function discernFormat(file_name){
 }
 
 function writeQuery(result){
+	var out_format = discernFormat(out_file);
 	if (out_format == 'json'){
 		fs.writeFileSync(out_file, JSON.stringify(result))
 	} else if (out_format == 'csv'){
@@ -106,12 +108,9 @@ function parseFile(in_file){
 
 
 function queryDb(){
-	if (in_file){
-	// if (mode == 'perm') { bk.temp(false) }
-		bk.createTable(table_name, in_file, schema)
-	}else{
-		bk.connect()
-	}
+	bk.connect(connection)
+	if (in_file){ createDb() }
+
 	bk.query(query_text, function(result){
 		if (!out_file){
 			console.log(result)
@@ -119,6 +118,11 @@ function queryDb(){
 			writeQuery(result)
 		}
 	})
+}
+
+function createDb(){
+	if (mode == 'create') { bk.temp(false) }
+	bk.createTable(table_name, in_file, schema)
 }
 
 function writeCommands(){
@@ -133,8 +137,10 @@ function writeCommands(){
 }
 
 if (query_text){
-	queryDb();
-}else{
+	queryDb()
+} else if (mode == 'create'){
+	createDb()
+} else {
 	writeCommands();
 }
 

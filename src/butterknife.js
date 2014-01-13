@@ -1,4 +1,5 @@
-var _           = require('underscore'),
+var fs          = require('fs'),
+		_           = require('underscore'),
 		Client      = require('pg').Client;
 
 // TODO
@@ -12,7 +13,7 @@ var _           = require('underscore'),
 
 var client,
 		tables = [],
-		conString = "pg://postgres:5432@localhost",
+		conString = fs.readFileSync(__dirname + '/db_config.txt').toString(),
 		err_preview_length = 100,
 		table_type = 'TEMP ',
 		connected = false;
