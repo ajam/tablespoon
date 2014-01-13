@@ -6,7 +6,7 @@ var fs = require('fs'),
 		dsv = require('dsv');
 
 var argv = optimist
-  .usage('Usage: butterknife IN_FILE -f (json|csv|dsv) -n TABLE_NAME -m (temp|perm) -d (\'\t\'|\'|\') -o OUT_FILE -q \"QUERY\" -of (json|csv) -s SCHEMA')
+  .usage('Usage: butterknife IN_FILE -f (csv|json|tsv|psv|DELIMITER) -n TABLE_NAME -m (temp|perm) -o OUT_FILE -q "QUERY" -of (json|csv) -s "SCHEMA"')
   .options('h', {
     alias: 'help',
     describe: 'Display help',
@@ -15,23 +15,18 @@ var argv = optimist
   .options('f', {
     alias: 'format',
     describe: 'Input file format',
-    default: 'csv'
+    default: false
   })
   .options('n', {
     alias: 'name',
     describe: 'Table name',
     default: 'tbl'
   })
-  .options('m', {
-    alias: 'mode',
-    describe: 'Table mode, either temporary (TEMP) or permanent table (PERM)',
-    default: 'TEMP'
-  })
-  .options('d', {
-    alias: 'delimiter',
-    describe: 'If `dsv` is chosen, select your delimiter.',
-    default: '|'
-  })
+  // .options('m', {
+  //   alias: 'mode',
+  //   describe: 'Table mode, either temporary, `temp`, or permanent table, `perm`.',
+  //   default: 'temp'
+  // })
   .options('o', {
     alias: 'out',
     describe: 'Out file',
@@ -44,8 +39,8 @@ var argv = optimist
   })
   .options('of', {
     alias: 'out_format',
-    describe: 'Format of output file, CSV or JSON',
-    default: 'JSON'
+    describe: 'Format of output file, csv or json',
+    default: 'json'
   })
   .options('s', {
     alias: 'schema',
@@ -59,28 +54,22 @@ var argv = optimist
 
 if (argv.h || argv.help) return optimist.showHelp();
 
-var in_file      = fs.readFileSync('./' + argv._[0]),
+
+
+var file_name    = argv._[0],
+		in_file      = fs.readFileSync('./' + file_name),
  		format       = argv.f  || argv['format'],
 		table_name   = argv.n  || argv['name'],
 		mode         = argv.m  || argv['mode'],
- 		delimiter    = argv.d  || argv['delimiter'],
  		out_file     = argv.o  || argv['out'],
  		query_text   = argv.q  || argv['query'],
  		out_format   = argv.of || argv['out_format'],
- 		schema       = argv.s  || argv['schema'],
- 		parser;
+ 		schema       = argv.s  || argv['schema'];
 
-if (format == 'json'){
-	in_file = JSON.parse(in_file)
-} else if (format == 'csv') {
-	in_file = dsv.csv.parse(in_file.toString())
-} else if (format == 'dsv') {
-	parser  = dsv(delimiter);
-	in_file = parser(in_file.toString());
-}
-
-if (mode == 'PERM') {
-  bk.temp(false);
+function discernFormat(file_name){
+	var name_arr = file_name.split('\.')
+	format_name = name_arr[name_arr.length - 1];
+	return format_name
 }
 
 function writeQuery(result){
@@ -90,6 +79,31 @@ function writeQuery(result){
 		fs.writeFileSync(out_file, dsv.csv.format(result))
 	}
 }
+
+function parseDsv(delimit_char){
+	var parser = dsv(delimit_char);
+	return parser(in_file.toString())
+}
+
+if (!format){
+	format = discernFormat(file_name);
+}
+
+if (format == 'json'){
+	in_file = JSON.parse(in_file)
+} else if (format == 'csv') {
+	in_file = dsv.csv.parse(in_file.toString())
+} else if (format == 'tsv') {
+	in_file = parseDsv('\t')
+} else if (format == 'psv') {
+	in_file = parseDsv('|')
+} else {
+	in_file = parseDsv(format)
+}
+
+// if (mode == 'perm') {
+//   bk.temp(false);
+// }
 
 var commands_obj,
 		commands    
