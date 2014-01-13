@@ -6,7 +6,7 @@ var fs = require('fs'),
 		dsv = require('dsv');
 
 var argv = optimist
-  .usage('Usage: butterknife -i IN_FILE -f (csv|json|tsv|psv|DELIMITER) -n TABLE_NAME -m (temp|perm) -o OUT_FILE -q "QUERY" -of (json|csv) -s "SCHEMA"')
+  .usage('Usage: butterknife -i IN_FILE -f (csv|json|tsv|psv|DELIMITER) -n TABLE_NAME -o OUT_FILE -q "QUERY" -p (json|csv) -s "SCHEMA"')
   .options('h', {
     alias: 'help',
     describe: 'Display help',
@@ -25,7 +25,7 @@ var argv = optimist
   .options('n', {
     alias: 'name',
     describe: 'Table name',
-    default: 'tbl'
+    default: 'butter_knife'
   })
   // .options('m', {
   //   alias: 'mode',
@@ -42,8 +42,8 @@ var argv = optimist
     describe: 'Query text. Must be quoted',
     default: false
   })
-  .options('of', {
-    alias: 'out_format',
+  .options('p', {
+    alias: 'output_format',
     describe: 'Format of output file, csv or json',
     default: 'json'
   })

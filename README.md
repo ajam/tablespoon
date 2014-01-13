@@ -53,11 +53,13 @@ bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 ## Command line
 
 ````
-butterknife IN_FILE -f (csv|json|tsv|psv|DELIMITER) -n TABLE_NAME -m (temp|perm)-o OUT_FILE -q "QUERY" -of (json|csv) -s "SCHEMA"
+butterknife IN_FILE -f (csv|json|tsv|psv|DELIMITER) -n TABLE_NAME -o OUT_FILE -q "QUERY" -p (json|csv) -s "SCHEMA"
 ````
 All values are optional except for `IN_FILE`
 
 If you don't specify a query, it will return the `CREATE TABLE` and `INSERT INTO` commands either to the terminal or to an output file specified through `-o`. 
 
 If your file is `json`, `csv`, `tsv`, or `psv` (pipe-separated file), you do not need to specify a delimiter. If your file is in a different format, specify the delimiter as `-f`, e.g. for a a @-delimited file, write `-f @`.If you do not set a filetype, Butterknife will attempt to read the file extension.
+
+If you don't specify a table name, `butter_knife` will be used by default.
 
