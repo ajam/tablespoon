@@ -140,7 +140,14 @@ bk.queries(queries, function(result){
 
 ## Command line
 
-`butterknife -i IN_FILE -f (csv|json|tsv|psv|DELIMITER) -n TABLE_NAME -o OUT_FILE -q "QUERY" -s "SCHEMA -m (create)"`
+````
+butterknife -i IN_FILE 
+	    -f (csv|json|tsv|psv|DELIMITER) 
+	    -n TABLE_NAME -o OUT_FILE 
+	    -q "QUERY" 
+	    -s "SCHEMA 
+	    -m (create)"
+````
 
 __Note: All commands on the database are run with `CREATE TEMP TABLE` so as not to alter your existing PostgreSQL tables.__ Only if you specify `-m create` will a table be added to your database outside of this query session. To delete a table, run `butterknife -q "DROP TABLE <table_name>;"`
 
