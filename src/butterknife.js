@@ -24,11 +24,11 @@ var helpers = {
 		if (_.isString(value)){
 			return 'text'
 		} else if (_.isNumber(value)){
-			return 'integer'
+			return 'numeric'
 		} else if (_.isArray(value)){
 				if (_.isObject(value[0])) { return 'json'   }    // If the array's first child is an object, assume that it's an array of objects and thus json.
 				if (_.isArray( value[0])) { return 'text[]' }    // If it's text, then assume it's a list of strings.
-				if (_.isNumber(value[0])) { return 'integer[]' } // If it's a number then integers
+				if (_.isNumber(value[0])) { return 'numeric[]' } // If it's a number then integers
 				if (_.isDate(  value[0])) { return 'date[]' }    // If date then dates. Unclear if this works
 		} else if (_.isBoolean(value)){
 			return 'boolean'
