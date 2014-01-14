@@ -9,6 +9,7 @@ A wrapper around [node-postgres](https://github.com/brianc/node-postgres) to eas
 * Maybe change createTable to createTempTable and createTable? Currently you would set bk.temp(false). Maybe that's an argument passed to createTable
 * Allow for option that creates a non temp table, and drops each time
 * Test date type
+* Support sqlite, allow that to be configured via `config.json` or through nodejs api.
 
 ## Usage
 
