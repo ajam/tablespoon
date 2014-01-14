@@ -2,15 +2,6 @@ var fs          = require('fs'),
 		_           = require('underscore'),
 		Client      = require('pg').Client;
 
-// TODO
-// Only print `query` during .each on the first row, else print `''`
-// Maybe print query in verbose mode or something to make syntax nicer on callback
-// Put some defaults for finding where your pg server is located, default to postgres@localhost/butter_knife, then postgres@localhost/
-// A method for just just inserting a file into postgres through node and through command line, temp table and not temp table.
-// Allow for option that creates a non temp table, and drops each time
-// Test date type
-// Make `bk.queries` example
-
 var client,
 		tables = [],
 		conString = fs.readFileSync(__dirname + '/db_config.txt').toString(),
@@ -107,7 +98,9 @@ var helpers = {
 				err_text = 'Error in ' + msg;
 		if (err){ 
 			pos = Number(err.position);
-			if (qt) {err_text += ':\n' + qt.substr(Math.max(0, pos - err_preview_length), Math.min(pos, err_preview_length)) + '^' + qt.substr(pos, Math.min(qt.length - pos, err_preview_length)) + '\n\n'} // Display the area where the query threw an error marked by a `^`. If the error occurs within the first fifty characters, make it start at the beginning of the string.
+			// Display the area where the query threw an error marked by a `^`. 
+			// If the error occurs within the first fifty characters, make it start at the beginning of the string.
+			if (qt) {err_text += ':\n' + qt.substr(Math.max(0, pos - err_preview_length), Math.min(pos, err_preview_length)) + '^' + qt.substr(pos, Math.min(qt.length - pos, err_preview_length)) + '\n\n'} 
 			console.error(err_text, err)	
 			throw err
 		}
@@ -117,7 +110,8 @@ var helpers = {
 function connectToDb(connection_string){
 	connection_string = connection_string || conString;
 	client = client || new Client(connection_string);
-  client.on('drain', client.end.bind(client)); //disconnect client when all queries are finished
+	//disconnect client when all queries are finished
+  client.on('drain', client.end.bind(client)); 
 	client.connect(function(err){
   	helpers.handleErr(err, 'database connection');
 	});
@@ -192,6 +186,7 @@ module.exports = {
 		connectToDb(connection_string);
 		return this;
 	},
+	// On error, if you want to display more of the query text, you can set the number of characters here.
 	errLength: function(length){
 		err_preview_length = length;
 		return this

@@ -4,6 +4,11 @@ A wrapper around [node-postgres](https://github.com/brianc/node-postgres) to eas
 
 ## TODOs
 * Set up `db_config.txt` through something more like `db_config.sample.txt` that won't get overwritten on update.
+* Only print `query` during .each on the first row, else print `''`
+* Maybe print query in verbose mode or something to make syntax nicer on callback
+* Maybe change createTable to createTempTable and createTable? Currently you would set bk.temp(false). Maybe that's an argument passed to createTable
+* Allow for option that creates a non temp table, and drops each time
+* Test date type
 
 ## Usage
 
