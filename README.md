@@ -149,7 +149,8 @@ bk.queries(queries, function(result){
 ````
 butterknife -i IN_FILE 
 	    -f (csv|json|tsv|psv|DELIMITER) 
-	    -n TABLE_NAME -o OUT_FILE 
+	    -n TABLE_NAME 
+	    -o OUT_FILE 
 	    -q "QUERY" 
 	    -s "SCHEMA 
 	    -m (create)"
