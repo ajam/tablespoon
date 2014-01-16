@@ -28,11 +28,11 @@ var data = [
 	}
 ]
 
-bk.createTable('cities', data)
+bk.createTable(data, 'cities')
 
 // Get the rows that don't have 15
-bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(result){
-	console.log(result)
+bk.query('SELECT * FROM cities LIMIT 2 OFFSET 1', function(result){
+	// console.log(result)
 	/*[
 	  { uid: '1', city: 'New York',     temp: [ 0, 35 ], country: 'USA' },
 	  { uid: '3', city: 'Paris',        temp: [ 2, 33 ], country: 'France' },
@@ -41,10 +41,10 @@ bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(result){
 })
 
 // Get the one that does
-bk.query.each('SELECT * FROM cities WHERE 15 = ANY (temp)', function(row){
-	// console.log(row)
-	/*
-	SELECT * FROM cities WHERE 15 = ANY (temp)
-	{ uid: '2',  city: 'Los Angeles',  temp: [ 15, 35 ],  country: 'USA' }*/
+bk.query.each('SELECT * FROM cities', function(row){
+	console.log(row)
+	
+	// SELECT * FROM cities WHERE 15 = ANY (temp)
+	// { uid: '2',  city: 'Los Angeles',  temp: [ 15, 35 ],  country: 'USA' }
 
 })

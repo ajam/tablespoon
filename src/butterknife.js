@@ -6,6 +6,7 @@ var client,
 		tables = [],
 		conString = fs.readFileSync(__dirname + '/db_config.txt').toString(),
 		err_preview_length = 100,
+		table_name_default = 'bk',
 		table_type = 'TEMP ',
 		connected = false;
 
@@ -84,7 +85,7 @@ var helpers = {
 		})
 		return holder.join(',');
 	},
-	assembleValueInsertString: function(table_name, data){
+	assembleValueInsertString: function(data, table_name){
 	  var stmt ='INSERT INTO ' + table_name + ' (' + _.keys(data[0]).join(',') + ') VALUES ',
 	      val_arr = [];
 		for (var i = 0; i < data.length; i++){
@@ -118,10 +119,11 @@ function connectToDb(connection_string){
 	connected = true;
 }
 
-function createTableCommands(table_name, table_data, table_schema){
+function createTableCommands(table_data, table_name, table_schema){
+	table_name = table_name || table_name_default;
 	var table_commands = {};
 	table_commands.create = 'CREATE ' + table_type + 'TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.columnTypesToString(table_data)) + ')';
-	table_commands.insert = helpers.assembleValueInsertString(table_name, table_data);
+	table_commands.insert = helpers.assembleValueInsertString(table_data, table_name);
 	return table_commands;
 }
 
@@ -134,9 +136,9 @@ function createAndInsert(table_commands){
   });
 }
 
-function createTable(table_name, table_data, table_schema){
+function createTable(table_data, table_name, table_schema){
 	if (!connected) connectToDb();
-	var table_commands = createTableCommands(table_name, table_data, table_schema);
+	var table_commands = createTableCommands(table_data, table_name, table_schema);
 	createAndInsert(table_commands);
 }
 

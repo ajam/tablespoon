@@ -46,7 +46,7 @@ var data = [
 	}
 ]
 
-bk.createTable('cities', data)
+bk.createTable(data, 'cities')
 
 // Get the rows that don't have 15
 bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
@@ -65,7 +65,7 @@ __connect__ _.connect(dbConnectionString)_
 
 Connects Butterknife to your PostgreSQL database. Connection defaults to `pg://postgres:5432@localhost/` and can be configured through `db_config.txt`. Read more about database connections.
 
-__createTable__ _.createTable(tablename, dataobject)_
+__createTable__ _.createTable(dataobject, tablename)_
 
 Syncronously creates a table in your PostgreSQL database
 
@@ -166,7 +166,7 @@ __Note: All commands on the database are run with `CREATE TEMP TABLE` so as not 
 Optionally:
 
 * Specify an input file format or custom delimeter with `-f`. If you don't, Butterknife will attempt to read the file extension -- supports `csv`, `json`, `tsv` and `psv` (pipe-separated values).
-* Specify a table name with `-n`. Defaults to `butterknife` if nothing specified.
+* Specify a table name with `-n`. Defaults to `bk` if nothing specified.
 * Specify an output file with `-o`. If you don't, sql commands will print to the console.
 * Specify a schema with `-s`. If you don't, Butterknife will attempt to read your schema from the specified input file.
 
@@ -178,7 +178,7 @@ Optionally:
 Optionally:
 
 * Specify an input file format or custom delimeter with `-f`. If you don't, Butterknife will attempt to read the file extension -- supports `csv`, `json`, `tsv` and `psv` (pipe-separated values).
-* Specify a table name with `-n`. Defaults to `butterknife` if nothing specified.
+* Specify a table name with `-n`. Defaults to `bk` if nothing specified.
 * Specify an output file with `-o`. Name must end in either `.csv` or `.json`. This extension will determine the format of your file. If `-o` not specified, your query result will print to the console.
 * Specify a database connection with `-c`. Defaults to `pg://postgres:5432@localhost`. Read more about database connections.
 
@@ -191,7 +191,7 @@ Optionally:
 Optionally:
 
 * Specify an input file format or custom delimeter with `-f`. If you don't, Butterknife will attempt to read the file extension -- supports `csv`, `json`, `tsv` and `psv` (pipe-separated values).
-* Specify a table name with `-n`. Defaults to `butterknife` if nothing specified.
+* Specify a table name with `-n`. Defaults to `bk` if nothing specified.
 * Specify a schema with `-s`. If you don't, Butterknife will attempt to read your schema from the specified input file.
 * Specify a query, see "Query an existing PostgresSQL table" for options.
 * Specify a database connection with `-c`. Defaults to `pg://postgres:5432@localhost`. Read more about database connections.

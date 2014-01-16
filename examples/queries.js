@@ -28,12 +28,13 @@ var data = [
 	}
 ]
 
-bk.createTable('cities', data)
+bk.createTable(data, 'cities')
 
 var queries = [
 	'SELECT * FROM cities LIMIT 1',
 	'SELECT * FROM cities LIMIT 1 OFFSET 1',
 ]
+
 bk.queries(queries, function(result){
 	console.log(result)
 /*	[

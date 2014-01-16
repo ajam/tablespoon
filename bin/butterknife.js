@@ -25,7 +25,7 @@ var argv = optimist
   .options('n', {
     alias: 'name',
     describe: 'Table name',
-    default: 'butterknife'
+    default: false
   })
   .options('m', {
     alias: 'mode',
@@ -122,11 +122,11 @@ function queryDb(){
 
 function createDb(){
 	if (mode == 'create') { bk.temp(false) }
-	bk.createTable(table_name, in_file, schema)
+	bk.createTable(in_file, table_name, schema)
 }
 
 function writeCommands(){
-	var commands_obj = bk.createTableCommands(table_name, in_file, schema),
+	var commands_obj = bk.createTableCommands(in_file, table_name, schema),
 	        commands = commands_obj.create + '; ' + commands_obj.insert;
 	if (!out_file){
 		console.log(commands)

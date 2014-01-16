@@ -28,7 +28,7 @@ var data = [
 	}
 ]
 
-bk.createTable('cities', data)
+bk.createTable(data, 'cities')
 
 bk.query('SELECT * FROM cities', function(result){
 	console.log(result.query)

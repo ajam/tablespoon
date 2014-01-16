@@ -31,7 +31,7 @@ var data = [
 // Define the table schema manually.
 var schema_string = 'city TEXT, temp integer[], country TEXT';
 
-bk.createTable('cities', data, schema_string)
+bk.createTable(data, 'cities', schema_string)
 
 // Get the rows that don't have 15
 bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(result){
