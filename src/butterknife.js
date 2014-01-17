@@ -2,11 +2,13 @@ var fs          = require('fs'),
 		_           = require('underscore'),
 		Client      = require('pg').Client;
 
+var defaults =  JSON.parse( fs.readFileSync(__dirname + '/db_config.json') );
+
 var client,
 		tables = [],
-		conString = fs.readFileSync(__dirname + '/db_config.txt').toString(),
-		err_preview_length = 100,
-		table_name_default = 'bk',
+		conString = defaults.connection,
+		err_preview_length = defaults.err_len,
+		table_name_default = defaults.temp_name,
 		table_type = 'TEMP ',
 		connected = false;
 
@@ -109,8 +111,8 @@ var helpers = {
 }
 
 function connectToDb(connection_string){
-	connection_string = connection_string || conString;
-	client = client || new Client(connection_string);
+	conString = connection_string || conString;
+	client = client || new Client(conString);
 	//disconnect client when all queries are finished
   client.on('drain', client.end.bind(client)); 
 	client.connect(function(err){
@@ -184,12 +186,14 @@ module.exports = {
 	query: query,
 	queries: queries,
 	createTableCommands: createTableCommands,
-	connect: function(connection_string){
-		connectToDb(connection_string);
+	connection: function(connection_string){
+		if (!arguments.length) return conString
+		conString = connection_string;
 		return this;
 	},
 	// On error, if you want to display more of the query text, you can set the number of characters here.
 	errLength: function(length){
+		if (!arguments.length) return err_preview_length
 		err_preview_length = length;
 		return this
 	},
