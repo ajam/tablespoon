@@ -2,15 +2,6 @@
 
 A wrapper around [node-postgres](https://github.com/brianc/node-postgres) to easily create and query a table from a local json or csv file.
 
-## TODOs
-* Set up `db_config.txt` through something more like `db_config.sample.txt` that won't get overwritten on update.
-* Only print `query` during .each on the first row, else print `''`
-* Maybe print query in verbose mode or something to make syntax nicer on callback
-* Maybe change createTable to createTempTable and createTable? Currently you would set bk.temp(false). Maybe that's an argument passed to createTable
-* Allow for option that creates a non temp table, and drops each time
-* Test date type
-* Support sqlite, allow that to be configured via `config.json` or through nodejs api.
-
 ## Usage
 
 ### Within Node.js
@@ -214,3 +205,13 @@ Butterknife defaults to the database at `pg://postgres:5432@localhost`, which gi
 Then specify your default connection in `config.txt` to `pg://postgres:5432@localhost/butterknife`. To override this, you can set `bk.connect(<new_connection_string>)` when using Butterknife through nodejs or through `-c <new_connection_string>` through the command line.
 
 You could also obviously set up a different user as well if you don't want to give Butterknife root access. If you have a user called, `mike` that owns a database `butterknife`, your connection string would be `pg://mike:5432@localhost/butterknife`
+
+## TODOs
+* Set up `db_config.txt` through something more like `db_config.sample.txt` that won't get overwritten on update.
+* Only print `query` during .each on the first row, else print `''`
+* Maybe print query in verbose mode or something to make syntax nicer on callback
+* Maybe change createTable to createTempTable and createTable? Currently you would set bk.temp(false). Maybe that's an argument passed to createTable
+* Allow for option that creates a non temp table, and drops each time
+* Test date type
+* Support sqlite, allow that to be configured via `config.json` or through nodejs api.
+* create a queries.each method that returns each result object one by one as they finish instead of waiting for them all.
