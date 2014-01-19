@@ -10,36 +10,49 @@ var client,
 		err_preview_length = defaults.err_len,
 		table_name_default = defaults.temp_name,
 		table_type = 'TEMP ',
-		connected = false;
+		connected = false,
+		verbose = false;
+
+function reportMsg(msg){
+	if(verbose){
+		console.log(msg)
+	}
+}
 
 var helpers = {
-	sqlizeType: function(value, key, data, i){
-		var err;
+	sqlizeType: function(value, key, data, i, j, arr_type){
+		var err,
+				arr_type = arr_type || undefined;
 		if (_.isString(value)){
 			return 'text'
 		} else if (_.isNumber(value)){
 			return 'numeric'
 		} else if (_.isArray(value)){
-				if (_.isObject(value[0])) { return 'json'   }    // If the array's first child is an object, assume that it's an array of objects and thus json.
-				if (_.isArray( value[0])) { return 'text[]' }    // If it's text, then assume it's a list of strings.
-				if (_.isNumber(value[0])) { return 'numeric[]' } // If it's a number then integers
-				if (_.isDate(  value[0])) { return 'date[]' }    // If date then dates. Unclear if this works
+			while (!arr_type){
+				arr_type = this.sqlizeType(value[j], key, data, i, j, arr_type)
+				j++
+				console.log(j)
+				if (!arr_type && j == value.length) { console.log('report null'); return null } // If that was the last node in the array and it's still null, return null to skip to the next object
+			}
+			if (arr_type == 'json') return arr_type
+			return arr_type + '[]'
 		} else if (_.isBoolean(value)){
 			return 'boolean'
-		} else if (_.isObject(value)){
-			return 'json'
 		} else if (_.isDate(value)){
 			return 'date'
+		} else if (_.isObject(value)){
+			return 'json'
 		} else if ((_.isNull(value) || _.isUndefined(value)) ){ 
-			if (i < data.length - 1 ){ return null } // If it's not the last row then continue processing other rows. Else...
+			if (i < data.length - 1 ) return null  // If it's not the last row then continue processing other rows. Else...
 			err = 'Your column "' + key + '" doesn\'t contain any values. Please include a value in at least one row. Or, manually define your schema instead.'; 
 			throw err + '\n{ ' + key + ': ' + value + ' }';
 		}
 	},
 	describeColumn: function(columns, data, i){
 		_.each(data[i], function(value, key){
+			var j = 0;
 			if (!columns[key]){
-				columns[key] = helpers.sqlizeType(value, key, data, i)
+				columns[key] = helpers.sqlizeType(value, key, data, i, j)
 			}
 		})
 		return columns
@@ -59,7 +72,7 @@ var helpers = {
 		var columns = this.describeColumns(data),
 				column_types = [];
 		_.each(columns, function(value, key){
-			column_types.push(key + ' ' + value)
+			column_types.push(key + ' ' + value.toUpperCase())
 		})
 		return column_types.join(',')
 	},
@@ -141,6 +154,7 @@ function createAndInsert(table_commands){
 function createTable(table_data, table_name, table_schema){
 	if (!connected) connectToDb();
 	var table_commands = createTableCommands(table_data, table_name, table_schema);
+	reportMsg(table_commands)
 	createAndInsert(table_commands);
 }
 
@@ -198,7 +212,12 @@ module.exports = {
 		return this
 	},
 	temp: function(type){
-		if (!type) table_type = '';
+		if (!arguments.length) table_type = '';
+		return this
+	},
+	verbose: function(state){
+		if (!arguments.length) return verbose
+		verbose = state;
 		return this
 	}
 }
