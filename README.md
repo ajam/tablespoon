@@ -208,10 +208,6 @@ You could also obviously set up a different user as well if you don't want to gi
 
 ## TODOs
 * Set up `db_config.txt` through something more like `db_config.sample.txt` that won't get overwritten on update.
-* Only print `query` during .each on the first row, else print `''`
-* Maybe print query in verbose mode or something to make syntax nicer on callback
-* Maybe change createTable to createTempTable and createTable? Currently you would set bk.temp(false). Maybe that's an argument passed to createTable
-* Allow for option that creates a non temp table, and drops each time
-* Test date type
 * Support sqlite, allow that to be configured via `config.json` or through nodejs api.
+* Maybe change createTable to createTempTable and createTable? Currently you would set bk.temp(false). Maybe that's an argument passed to createTable
 * create a queries.each method that returns each result object one by one as they finish instead of waiting for them all.
