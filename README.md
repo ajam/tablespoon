@@ -54,7 +54,7 @@ bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 
 __connect__ _.connect(dbConnectionString)_
 
-Connects Butterknife to your PostgreSQL database. Connection defaults to `pg://postgres:5432@localhost/` and can be configured through `config.json`. Read more about database connections.
+Connects Butterknife to your PostgreSQL database. Connection defaults to `pg://postgres:5432@localhost/` and can be configured through `config.json`. [Read more about database connections](#about-database-connections).
 
 __createTable__ _.createTable(dataobject, tablename, tableschema, permanent)_
 
@@ -172,7 +172,7 @@ Optionally:
 * Specify an input file format or custom delimeter with `-f`. If you don't, Butterknife will attempt to read the file extension -- supports `csv`, `json`, `tsv` and `psv` (pipe-separated values).
 * Specify a table name with `-n`. Defaults to `bk` if nothing specified.
 * Specify an output file with `-o`. Name must end in either `.csv` or `.json`. This extension will determine the format of your file. If `-o` not specified, your query result will print to the console.
-* Specify a database connection with `-c`. Defaults to `pg://postgres:5432@localhost`. Read more about database connections.
+* Specify a database connection with `-c`. Defaults to `pg://postgres:5432@localhost`. [Read more about database connections](#about-database-connections).
 
 
 #### Create a table in your PostgreSQL database from a file, optionally querying it
@@ -186,7 +186,7 @@ Optionally:
 * Specify a table name with `-n`. Defaults to `bk` if nothing specified.
 * Specify a schema with `-s`. If you don't, Butterknife will attempt to read your schema from the specified input file.
 * Specify a query, see "Query an existing PostgresSQL table" for options.
-* Specify a database connection with `-c`. Defaults to `pg://postgres:5432@localhost`. Read more about database connections.
+* Specify a database connection with `-c`. Defaults to `pg://postgres:5432@localhost`. [Read more about database connections](#about-database-connections).
 
 #### Query an existing PostgreSQL table
 
@@ -195,7 +195,7 @@ Optionally:
 Optionally:
 
 * Specify an output file with `-o`. Name must end in either `.csv` or `.json`. This extension will determine the format of your file. If `-o` not specified, your query result will print to the console.
-* Specify a database connection with `-c`. Defaults to `pg://postgres:5432@localhost`. Read more about database connections.
+* Specify a database connection with `-c`. Defaults to `pg://postgres:5432@localhost`. [Read more about database connections](#about-database-connections).
 
 
 ## About database connections
