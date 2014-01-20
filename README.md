@@ -210,4 +210,3 @@ You could also obviously set up a different user as well if you don't want to gi
 * Set up `db_config.txt` through something more like `db_config.sample.txt` that won't get overwritten on update.
 * Support sqlite, allow that to be configured via `config.json` or through nodejs api.
 * Maybe change createTable to createTempTable and createTable? Currently you would set bk.temp(false). Maybe that's an argument passed to createTable
-* create a queries.each method that returns each result object one by one as they finish instead of waiting for them all.

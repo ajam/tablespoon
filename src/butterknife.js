@@ -203,6 +203,20 @@ query.each = function(query_text, cb){
   	cb(row, query_text);
   })
 }
+queries.each = function(query_texts, cb){
+	for (var i = 0; i < query_texts.length; i++){
+		(function(query_text){
+			var result_obj = {};
+		  client.query(query_text, function(err, result){
+		  	helpers.handleErr(err, 'query', query_text)
+		  	result_obj.query = query_text;
+		  	result_obj.rows = result.rows;
+		  	cb(result_obj)
+		  })
+		})(query_texts[i])
+		
+	}
+}
 
 module.exports = {
 	createTable: createTable,
