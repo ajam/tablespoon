@@ -2,7 +2,23 @@ var fs          = require('fs'),
 		_           = require('underscore'),
 		Client      = require('pg').Client;
 
-var defaults =  JSON.parse( fs.readFileSync(__dirname + '/db_config.json') );
+function loadConfig(){
+	var user_config   = __dirname + '/config.json',
+	    sample_config = __dirname + '/config.sample.json';
+	if (fs.existsSync(user_config)){
+		return fs.readFileSync(user_config)
+	}else{
+		return fs.readFileSync(sample_config)
+	}
+}
+
+function reportMsg(msg){
+	if(verbose){
+		console.log(msg)
+	}
+}
+
+var defaults =  JSON.parse( loadConfig() );
 
 var client,
 		tables = [],
@@ -12,12 +28,6 @@ var client,
 		table_type = 'TEMP ',
 		connected = false,
 		verbose = false;
-
-function reportMsg(msg){
-	if(verbose){
-		console.log(msg)
-	}
-}
 
 var helpers = {
 	sqlizeType: function(value, j, arr_type){
@@ -160,7 +170,8 @@ function createAndInsert(table_commands){
   });
 }
 
-function createTable(table_data, table_name, table_schema){
+function createTable(table_data, table_name, table_schema, permanent){
+	if (permanent) {table_type = ''};
 	if (!connected) connectToDb();
 	var table_commands = createTableCommands(table_data, table_name, table_schema);
 	reportMsg(table_commands)

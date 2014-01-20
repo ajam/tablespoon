@@ -54,11 +54,11 @@ bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 
 __connect__ _.connect(dbConnectionString)_
 
-Connects Butterknife to your PostgreSQL database. Connection defaults to `pg://postgres:5432@localhost/` and can be configured through `db_config.txt`. Read more about database connections.
+Connects Butterknife to your PostgreSQL database. Connection defaults to `pg://postgres:5432@localhost/` and can be configured through `config.json`. Read more about database connections.
 
-__createTable__ _.createTable(dataobject, tablename)_
+__createTable__ _.createTable(dataobject, tablename, tableschema, permanent)_
 
-Syncronously creates a table in your PostgreSQL database
+Syncronously creates a table in your PostgreSQL database. Optionally pass in a __tablename__ (default `bk`) or a __tableschema.__ By default, Butterknife will attempt to read the datatypes in your object. TODO Here's a list of supported datatypes and how they are mapped to SQL datatypes. By default, Butterknife will create a temporary table that exists only for this session. To instead create a permanent table, pass in `true` as boolean to __permanent__.
 
 __query__ _.query(queryString, function)_
 
@@ -202,11 +202,11 @@ Optionally:
 
 Butterknife defaults to the database at `pg://postgres:5432@localhost`, which gives it acess to the main database of your PostgreSQL installation. In order to better sandbox your Butterknife projects, you might want to create a separate database called `butterknife`. To do this, log into psql by running `psql` on the command line and run `CREATE DATABASE butterknife`. 
 
-Then specify your default connection in `config.txt` to `pg://postgres:5432@localhost/butterknife`. To override this, you can set `bk.connect(<new_connection_string>)` when using Butterknife through nodejs or through `-c <new_connection_string>` through the command line.
+Then specify your default connection in `config.json` to `pg://postgres:5432@localhost/butterknife`. To override this, you can set `bk.connect(<new_connection_string>)` when using Butterknife through nodejs or through `-c <new_connection_string>` through the command line.
 
 You could also obviously set up a different user as well if you don't want to give Butterknife root access. If you have a user called, `mike` that owns a database `butterknife`, your connection string would be `pg://mike:5432@localhost/butterknife`
 
 ## TODOs
-* Set up `db_config.txt` through something more like `db_config.sample.txt` that won't get overwritten on update.
 * Support sqlite, allow that to be configured via `config.json` or through nodejs api.
-* Maybe change createTable to createTempTable and createTable? Currently you would set bk.temp(false). Maybe that's an argument passed to createTable
+* Document `config.json` vs `config.sample.json`
+* Tests for cli
