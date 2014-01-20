@@ -106,24 +106,24 @@ data.null_arr_ = [
 		awesome: true
 	}
 ]
-data.null_arr00_ = [
-	{
-		city: null,
-		avg: null,
-		range: [null, null],
-		landmarks: null,
-		awesome: null
-	},
-	{
-		city: 'Los Angeles',
-		avg: 72,
-		range: [null, 103],
-		landmarks: ['Getty', 'The 405'],
-		awesome: true
-	}
-]
+// data.null_arr00_ = [
+// 	{
+// 		city: null,
+// 		avg: null,
+// 		range: [null, null],
+// 		landmarks: null,
+// 		awesome: null
+// 	},
+// 	{
+// 		city: 'Los Angeles',
+// 		avg: 72,
+// 		range: [null, null],
+// 		landmarks: ['Getty', 'The 405'],
+// 		awesome: true
+// 	}
+// ]
 
-data.null_arr00_ = [
+data.null_arr01_ = [
 	{
 		city: null,
 		avg: null,
@@ -222,12 +222,12 @@ tests.queryNullArr = function(cb){
 		}
 	})
 }
-tests.queryNullArr00 = function(cb){
-	bk.query('SELECT * FROM null_arr00_', function(result){
+tests.queryNullArr01 = function(cb){
+	bk.query('SELECT * FROM null_arr01_', function(result){
 		console.log(result.rows)
 		// result.rows.forEach(function(row){	delete row.uid })
 		// Add && _.isEqual(result.rows,data.mixed_ when merged https://github.com/brianc/node-postgres/pull/501
-		if (result.query == 'SELECT * FROM null_arr00_'){
+		if (result.query == 'SELECT * FROM null_arr01_'){
 			cb(true)
 		}else{
 			cb(false)

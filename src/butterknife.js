@@ -20,7 +20,7 @@ function reportMsg(msg){
 }
 
 var helpers = {
-	sqlizeType: function(value, key, data, i, j, arr_type){
+	sqlizeType: function(value, j, arr_type){
 		var err,
 				arr_type = arr_type || undefined;
 		if (_.isString(value)){
@@ -29,10 +29,9 @@ var helpers = {
 			return 'numeric'
 		} else if (_.isArray(value)){
 			while (!arr_type){
-				arr_type = this.sqlizeType(value[j], key, data, i, j, arr_type)
+				arr_type = this.sqlizeType(value[j], j, arr_type)
 				j++
-				console.log(j)
-				if (!arr_type && j == value.length) { console.log('report null'); return null } // If that was the last node in the array and it's still null, return null to skip to the next object
+				if (!arr_type && j == value.length) { return null } // If that was the last node in the array and it's still null, return null to skip to the next object
 			}
 			if (arr_type == 'json') return arr_type
 			return arr_type + '[]'
@@ -43,29 +42,39 @@ var helpers = {
 		} else if (_.isObject(value)){
 			return 'json'
 		} else if ((_.isNull(value) || _.isUndefined(value)) ){ 
-			if (i < data.length - 1 ) return null  // If it's not the last row then continue processing other rows. Else...
-			err = 'Your column "' + key + '" doesn\'t contain any values. Please include a value in at least one row. Or, manually define your schema instead.'; 
-			throw err + '\n{ ' + key + ': ' + value + ' }';
+			return null
 		}
 	},
 	describeColumn: function(columns, data, i){
 		_.each(data[i], function(value, key){
 			var j = 0;
 			if (!columns[key]){
-				columns[key] = helpers.sqlizeType(value, key, data, i, j)
+				columns[key] = helpers.sqlizeType(value, j)
 			}
 		})
 		return columns
 	},
+	checkColumnsForNulls: function(cols){
+		null_idx = _.values(cols).indexOf(null);
+		if (null_idx != -1){
+			var key = _.keys(cols)[null_idx];
+			throw new Error('The column "' + key + '" doesn\'t contain any values. Please include a value in at least one row. Or, instead, manually define your schema.'); 
+		}
+		return true
+	},
 	describeColumns: function(data){
 		var columns = {},
-				i = 0;
+				i = 0,
+				null_idx;
 		this.describeColumn(columns, data, i)
-		// If there are null values for that object, then try the next object
-		while (_.values(columns).indexOf(null) != -1){
+		// If there are null values for that object, then try the next object until you run out of null or run out of objects to test
+		while (_.contains(_.values(columns), null) && i < data.length){
 			i++
 			this.describeColumn(columns, data, i)
 		}
+		// If there is still a null value after the looping, it means one column doesn't have any value at all
+		// Throw an error because we can't create the table without known the column types
+		this.checkColumnsForNulls(columns);
 		return columns
 	},
 	columnTypesToString: function(data){
