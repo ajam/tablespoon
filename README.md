@@ -108,6 +108,14 @@ console.log(commands)
   insert: 'INSERT INTO cities (city,temp,country) VALUES (\'New York\',27.2,\'USA\'),(\'Los A\'\'ngeles\',72,\'USA\'),(\'Paris\',34,\'F"rance\'),(\'Marseille\',43,\'F\'\'rance\'),(\'Lon"don\',33,\'UK\')' }*/
 ````
 
+__createEmptyTable__ _.__createEmptyTable__(dataobject, [tablename], [tableschema], [permanent])_
+
+Creates an empty table with the given data. Useful in conjunction with `insert` to make a table and then insert it with various data later.
+
+__insert__ _.__insert__(dataobject, [tablename])_
+
+Inserts a data object into an existing table.
+
 ##### Query methods
 
 __query__ _.query(queryString, function)_
@@ -264,6 +272,4 @@ You could also obviously set up a different user as well if you don't want to gi
 ## TODOs
 * Turn documentation into a wiki 
 * Native date support, if it isn't doing that already
-* Make a method for creating a table without inserting any data
-* Make a method for just inserting data into an existing table
 * Tests for cli

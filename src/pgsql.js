@@ -33,11 +33,19 @@ function connectToDb(connection_string){
 }
 
 function createAndInsert(table_commands){
-	client.query(table_commands.create, function(err, result){
-  	helpers.handleErr(err, 'table creation', table_commands.create)
+	createTable(table_commands.create)
+	insertInto(table_commands.insert)
+}
+
+function createTable(create_commands){
+	client.query(create_commands, function(err, result){
+  	helpers.handleErr(err, 'table creation', create_commands)
 	});
-  client.query(table_commands.insert, function(err, result){
-  	helpers.handleErr(err, 'row insertion', table_commands.insert)
+}
+
+function insertInto(insert_commands){
+  client.query(insert_commands, function(err, result){
+  	helpers.handleErr(err, 'row insertion', insert_commands)
   });
 }
 
@@ -93,6 +101,8 @@ queries.each = function(query_texts, cb){
 }
 module.exports = {
 	connectToDb: connectToDb,
+	createTable: createTable,
+	insertInto: insertInto,
 	createAndInsert: createAndInsert,
 	query: query,
 	queries: queries,

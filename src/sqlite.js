@@ -2,7 +2,8 @@ var sqlite3 = require('sqlite3').verbose(),
 		colors  = require('colors');
 
 var db,
-		connected = false;
+		connected = false,
+		db_instance;
 
 var helpers = {
 	handleErr: function(err, msg, qt){
@@ -21,11 +22,19 @@ function connectToDb(){
 }
 
 function createAndInsert(table_commands){
-	console.log(table_commands)
-	var db_instance;
+	createTable(table_commands.create)
+	insertInto(table_commands.insert)
+}
+
+function createTable(create_commands){
 	db_instance = db.serialize(function(){
-	  db.run(table_commands.create);
-	  db.run(table_commands.insert);
+		db.run(create_commands)
+	})
+}
+
+function insertInto(insert_commands){
+	db_instance = db.serialize(function(){
+		db.run(insert_commands)
 	})
 }
 
@@ -42,6 +51,8 @@ function query(query_text, cb){
 
 module.exports = {
 	connectToDb: connectToDb,
+	createTable: createTable,
+	insertInto: insertInto,
 	createAndInsert: createAndInsert,
 	query: query
 }

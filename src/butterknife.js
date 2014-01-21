@@ -178,7 +178,8 @@ function connectToDb(connection_string){
 	connected = true;
 }
 
-function createTableCommands(table_data, table_name, table_schema){
+function createTableCommands(table_data, table_name, table_schema, permanent){
+	setTableType(permanent);
 	table_name = table_name || table_name_default;
 	var table_commands = {};
 	table_commands.create = 'CREATE ' + table_type + 'TABLE ' + table_name + ' (uid ' + ((flavor == 'sqlite') ? 'INTEGER' : 'BIGSERIAL') + ' PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.columnTypesToString(table_data)) + ')';
@@ -187,6 +188,7 @@ function createTableCommands(table_data, table_name, table_schema){
 }
 
 function createAndInsert(table_commands){
+	if (!connected) connectToDb();
 	if (flavor == 'sqlite'){
 		sqlite.createAndInsert(table_commands)
 	} else if (flavor == 'pgsql'){
@@ -195,9 +197,27 @@ function createAndInsert(table_commands){
 }
 
 function createTable(table_data, table_name, table_schema, permanent){
-	setTableType(permanent);
-	if (!connected) connectToDb();
-	var table_commands = createTableCommands(table_data, table_name, table_schema);
+	var table_commands = createTableCommands(table_data, table_name, table_schema, permanent);
+	reportMsg(table_commands)
+	if (flavor == 'sqlite'){
+		sqlite.createTable(table_commands.create)
+	} else if (flavor == 'pgsql'){
+		pgsql.createTable(table_commands.create)
+	}
+}
+
+function insertInto(table_data, table_name){
+	var table_commands = createTableCommands(table_data, table_name);
+	reportMsg(table_commands)
+	if (flavor == 'sqlite'){
+		sqlite.insertInto(table_commands.insert)
+	} else if (flavor == 'pgsql'){
+		pgsql.insertInto(table_commands.insert)
+	}
+}
+
+function makeTableFromData(table_data, table_name, table_schema, permanent){
+	var table_commands = createTableCommands(table_data, table_name, table_schema, permanent);
 	reportMsg(table_commands)
 	createAndInsert(table_commands);
 }
@@ -268,11 +288,12 @@ function getTableName(){
 module.exports = {
 	sqlite: setSqlite,
 	pgsql: setPgsql,
-	createTable: createTable,
+	createTable: makeTableFromData,
+	createEmptyTable: createTable,
+	insert: insertInto,
 	query: query,
 	queries: queries,
 	createTableCommands: createTableCommands,
-	connection: setConnection,
 	temp: setTableType,
 	verbose: setLogging,
 	flavor: getFlavor,
