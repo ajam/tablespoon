@@ -106,7 +106,6 @@ function parseFile(in_file){
 	return in_file
 }
 
-
 function queryDb(){
 	bk.connect(connection)
 	if (in_file){ createDb() }
@@ -143,7 +142,3 @@ if (query_text){
 } else {
 	writeCommands();
 }
-
-
-
-
