@@ -31,6 +31,6 @@ var data = [
 bk.createTable(data, 'cities');
 
 
-bk.query('SELECT * FROM cities', function(result){
+bk.query.each('SELECT * FROM cities', function(result){
 	console.log(result)
 });

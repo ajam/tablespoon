@@ -235,7 +235,7 @@ function query(query_text, cb){
 function queries(query_texts, cb){
 	if (!connected) connectToDb();
 	if (flavor == 'sqlite'){
-
+		sqlite.queries(query_texts, cb)
 	}else if (flavor == 'pgsql'){
 		pgsql.queries(query_texts, cb)
 	}
@@ -243,7 +243,7 @@ function queries(query_texts, cb){
 query.each = function(query_text, cb){
 	if (!connected) connectToDb();
 	if (flavor == 'sqlite'){
-
+		sqlite.query.each(query_text, cb)
 	}else if (flavor == 'pgsql'){
 		pgsql.query.each(query_text, cb)
 	}
@@ -252,9 +252,9 @@ query.each = function(query_text, cb){
 queries.each = function(query_texts, cb){
 	if (!connected) connectToDb();
 	if (flavor == 'sqlite'){
-
+		sqlite.queries.each(query_texts, cb)
 	}else if (flavor == 'pgsql'){
-		pgsql.queries.each(query_text, cb)
+		pgsql.queries.each(query_texts, cb)
 	}
 }
 

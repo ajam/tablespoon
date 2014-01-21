@@ -48,12 +48,57 @@ function query(query_text, cb){
 	})
 }
 
+query.each = function(query_text, cb){
+	db.each(query_text, function(err, result){
+		cb(result)
+	});
+}
+
+function queries(query_texts, cb){
+	var results = [],
+			counter = 0;
+	for (var i = 0; i < query_texts.length; i++){
+		(function(query_text){
+			var result_obj = {};
+		  db.all(query_text, function(err, result){
+		  	counter++;
+		  	helpers.handleErr(err, 'query', query_text)
+		  	result_obj.query = query_text;
+		  	result_obj.rows = result;
+		  	results.push(result_obj);
+		  	if (counter == query_texts.length){
+			  	cb(results);
+		  	}
+		  })
+		})(query_texts[i])
+		
+	}
+}
+
+queries.each = function(query_texts, cb){
+	for (var i = 0; i < query_texts.length; i++){
+		(function(query_text){
+			var result_obj = {};
+		  db.all(query_text, function(err, result){
+		  	helpers.handleErr(err, 'query', query_text)
+		  	result_obj.query = query_text;
+		  	result_obj.rows = result;
+		  	cb(result_obj)
+		  })
+		})(query_texts[i])
+		
+	}
+}
+
+
+
 
 module.exports = {
 	connectToDb: connectToDb,
 	createTable: createTable,
 	insertInto: insertInto,
 	createAndInsert: createAndInsert,
-	query: query
+	query: query,
+	queries: queries
 }
 
