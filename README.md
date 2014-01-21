@@ -205,7 +205,7 @@ Optionally:
 #### Create a table in your PostgreSQL database from a file, optionally querying it
 
 * Specify the `IN_FILE` with `-i`.
-* Specify the mode as `CREATE` with `-m CREATE`.
+* Specify the mode as `create` with `-m create`.
 
 Optionally:
 

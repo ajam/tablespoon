@@ -29,7 +29,7 @@ var argv = optimist
   })
   .options('m', {
     alias: 'mode',
-    describe: 'Table mode, temporary table - `temp` - or create permanent table - `create`',
+    describe: 'Table mode, to create permanent table use `create`',
     default: 'temp'
   })
   .options('o', {
