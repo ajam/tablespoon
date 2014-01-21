@@ -1,7 +1,7 @@
 {
   "name": "butterknife",
   "version": "0.1.0",
-  "description": "A wrapper around node-postgres to easilly query json or csv data.",
+  "description": "A node-postgres wrapper to easilly query json or csv data.",
   "main": "./src/butterknife.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
