@@ -1,6 +1,7 @@
 var fs          = require('fs'),
 		_           = require('underscore'),
-		Client      = require('pg').Client;
+		Client      = require('pg').Client,
+		colors      = require('colors');
 
 function loadConfig(){
 	var user_config   = __dirname + '/config.json',
@@ -24,7 +25,7 @@ var client,
 		tables = [],
 		conString = defaults.connection,
 		err_preview_length = defaults.err_len,
-		table_name_default = defaults.temp_name,
+		table_name_default = defaults.db_name,
 		table_type = 'TEMP ',
 		connected = false,
 		verbose = false;
@@ -68,7 +69,7 @@ var helpers = {
 		null_idx = _.values(cols).indexOf(null);
 		if (null_idx != -1){
 			var key = _.keys(cols)[null_idx];
-			throw new Error('The column "' + key + '" doesn\'t contain any values. Please include a value in at least one row. Or, instead, manually define your schema.'); 
+			throw new Error('The column "' + key.magenta + '" doesn\'t contain any values. Please include a value in at least one row. Or, instead, manually define your schema.'); 
 		}
 		return true
 	},
@@ -130,13 +131,13 @@ var helpers = {
 	},
 	handleErr: function(err, msg, qt){
 		var pos,
-				err_text = 'Error in ' + msg;
+				err_text = 'Error in '.red + msg.red;
 		if (err){ 
 			pos = Number(err.position);
 			// Display the area where the query threw an error marked by a `^`. 
 			// If the error occurs within the first fifty characters, make it start at the beginning of the string.
-			if (qt) {err_text += ':\n' + qt.substr(Math.max(0, pos - err_preview_length), Math.min(pos, err_preview_length)) + '^' + qt.substr(pos, Math.min(qt.length - pos, err_preview_length)) + '\n\n'} 
-			console.error(err_text, err)	
+			if (qt) {err_text += ':\n'.red + qt.substr(Math.max(0, pos - err_preview_length), Math.min(pos, err_preview_length)) + '^'.magenta + qt.substr(pos, Math.min(qt.length - pos, err_preview_length))} 
+			console.error(err_text)	
 			throw err
 		}
 	}

@@ -7,7 +7,7 @@ A wrapper around [node-postgres](https://github.com/brianc/node-postgres) to eas
 ### Within Node.js
 
 ````
-var bk = require('../src/butter-knife.js').connect('pg://postgres@localhost/');
+var bk = require('../src/butter-knife.js').connection('pg://postgres@localhost/');
 
 var data = [
 	{
@@ -50,15 +50,37 @@ bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 })
 ````
 
+#### Optional setup
+
+Config options will be taken from `config.sample.json` and work out of the box with those settings. If you want, you can alter them by copying and renaming `config.sample.json` to `config.json`.
+
+The options:
+
+* `connection:` Database connection string. The location of your PostgreSQL database. [Read more about database connections](#about-database-connections). Defaults to `pg://postgres:5432@localhost/`.
+* 'err_len:' The number of characters of your query to display before and after an error occurrs. Set to a higher number if you want to see more context around errors. The point of error will appear with a `^`. Defaults to `100`.
+* 'db_name:' The name of the database, if none specified. Defaults to `bk`.
+
 #### Methods
 
-__connect__ _.connect(dbConnectionString)_
+##### Table creation methods
+
+__connection__ _.connection(dbConnectionString)_
 
 Connects Butterknife to your PostgreSQL database. Connection defaults to `pg://postgres:5432@localhost/` and can be configured through `config.json`. [Read more about database connections](#about-database-connections).
 
-__createTable__ _.createTable(dataobject, tablename, tableschema, permanent)_
+__createTable__ _.createTable(dataobject, [tablename], [tableschema], [permanent])_
 
 Syncronously creates a table in your PostgreSQL database. Optionally pass in a __tablename__ (default `bk`) or a __tableschema.__ By default, Butterknife will attempt to read the datatypes in your object. TODO Here's a list of supported datatypes and how they are mapped to SQL datatypes. By default, Butterknife will create a temporary table that exists only for this session. To instead create a permanent table, pass in `true` as boolean to __permanent__.
+
+__createTableCommands__ _.createTableCommands(dataobject, [tablename], [tableschema], [permanent])_
+
+Returns a json object with two keys `create` and `insert` that contain the sql commands to make the table from your data. This method does not actually create your table. Useful if you find datatypes or create and insert statements tedious. Used internally by `.createTable`.
+
+__errLength__ _.errLength(integer)_
+
+Also settable via `config.json`, this will set the number of characters of your query to display in an error message. The point of error will appear with a `^`. Useful if you want to debug an error without globally changing it for the whole module.
+
+##### Query methods
 
 __query__ _.query(queryString, function)_
 
@@ -95,6 +117,7 @@ bk.query.each('SELECT * FROM cities LIMIT 2', function(row){
 __queries__ _.queries(list, function)_
 
 Takes a list of query strings, processes them synchronously and returns them in an array of objects. Each object has the same structure as the result object from `.query`
+
 ````
 var queries = [
 	'SELECT * FROM cities LIMIT 1',
@@ -134,6 +157,10 @@ bk.queries(queries, function(result){
 ]
 */
 ````
+
+__queries.each__ _.queries.each(list, function)_
+
+The same as `.queries` except the callback is invoked after each query is finished as opposed to waiting for them all to finish.
 
 ## Command line
 
@@ -202,7 +229,7 @@ Optionally:
 
 Butterknife defaults to the database at `pg://postgres:5432@localhost`, which gives it acess to the main database of your PostgreSQL installation. In order to better sandbox your Butterknife projects, you might want to create a separate database called `butterknife`. To do this, log into psql by running `psql` on the command line and run `CREATE DATABASE butterknife`. 
 
-Then specify your default connection in `config.json` to `pg://postgres:5432@localhost/butterknife`. To override this, you can set `bk.connect(<new_connection_string>)` when using Butterknife through nodejs or through `-c <new_connection_string>` through the command line.
+Then specify your default connection in `config.json` to `pg://postgres:5432@localhost/butterknife`. To override this, you can set `bk.connection(<new_connection_string>)` when using Butterknife through nodejs or through `-c <new_connection_string>` through the command line.
 
 You could also obviously set up a different user as well if you don't want to give Butterknife root access. If you have a user called, `mike` that owns a database `butterknife`, your connection string would be `pg://mike:5432@localhost/butterknife`
 
