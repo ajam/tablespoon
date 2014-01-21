@@ -276,7 +276,7 @@ module.exports = {
 	temp: setTableType,
 	verbose: setLogging,
 	flavor: getFlavor,
-	connect: getConString,
+	connection: getConString,
 	tableName: getTableName
 }
 

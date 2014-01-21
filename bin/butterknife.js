@@ -25,7 +25,7 @@ var argv = optimist
   .options('n', {
     alias: 'name',
     describe: 'Table name',
-    default: bk.getTableName()
+    default: bk.tableName()
   })
   .options('q', {
     alias: 'query',
