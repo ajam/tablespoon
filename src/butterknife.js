@@ -172,7 +172,6 @@ function createAndInsert(table_commands){
 }
 
 function createTable(table_data, table_name, table_schema, permanent){
-	console.log(permanent, conString)
 	setTableType(permanent);
 	if (!connected) connectToDb();
 	var table_commands = createTableCommands(table_data, table_name, table_schema);

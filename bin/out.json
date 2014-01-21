@@ -1,0 +1,1 @@
+{"query":"SELECT * FROM dfa","rows":[{"uid":"1","city":"New York","temp":"23","country":"USA"},{"uid":"2","city":"Los Angeles","temp":"43","country":"USA"},{"uid":"3","city":"Paris","temp":"12","country":"France"},{"uid":"4","city":"Marseille","temp":"20","country":"France"},{"uid":"5","city":"London","temp":"28","country":"UK"}]}

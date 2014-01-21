@@ -81,7 +81,7 @@ function writeQuery(result){
 	if (out_format == 'json'){
 		fs.writeFileSync(out_file, JSON.stringify(result))
 	} else if (out_format == 'csv'){
-		fs.writeFileSync(out_file, dsv.csv.format(result))
+		fs.writeFileSync(out_file, dsv.csv.format(result.rows))
 	}
 }
 
