@@ -120,7 +120,7 @@ function queryDb(){
 }
 
 function createDb(){
-	(mode == 'temp') ? mode = false : mode = true;
+	(mode == 'create') ? mode = true : mode = false;
 	bk.createTable(in_file, table_name, schema, mode)
 }
 
