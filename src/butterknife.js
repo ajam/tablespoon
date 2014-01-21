@@ -172,6 +172,7 @@ function createAndInsert(table_commands){
 }
 
 function createTable(table_data, table_name, table_schema, permanent){
+	console.log(permanent, conString)
 	setTableType(permanent);
 	if (!connected) connectToDb();
 	var table_commands = createTableCommands(table_data, table_name, table_schema);
@@ -180,6 +181,7 @@ function createTable(table_data, table_name, table_schema, permanent){
 }
 
 function query(query_text, cb){
+	if (!connected) connectToDb();
 	var result_obj = {}
   client.query(query_text, function(err, result){
   	helpers.handleErr(err, 'query', query_text)
@@ -189,6 +191,7 @@ function query(query_text, cb){
   })
 }
 function queries(query_texts, cb){
+	if (!connected) connectToDb();
 	var results = [],
 			counter = 0;
 
@@ -210,12 +213,14 @@ function queries(query_texts, cb){
 	}
 }
 query.each = function(query_text, cb){
+	if (!connected) connectToDb();
 	var query = client.query(query_text);
   query.on('row', function(row, result){
   	cb(row, query_text);
   })
 }
 queries.each = function(query_texts, cb){
+	if (!connected) connectToDb();
 	for (var i = 0; i < query_texts.length; i++){
 		(function(query_text){
 			var result_obj = {};

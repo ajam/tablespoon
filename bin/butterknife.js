@@ -29,7 +29,7 @@ var argv = optimist
   })
   .options('m', {
     alias: 'mode',
-    describe: 'Table mode, either use a temporary table (`temp`) or create a permanent table (`create`).',
+    describe: 'Table mode, temporary table - `temp` - or create permanent table - `create`',
     default: 'temp'
   })
   .options('o', {
@@ -50,7 +50,7 @@ var argv = optimist
   .options('c', {
     alias: 'connection',
     describe: 'Your postgres database location.',
-    default: 'pg://postgres:5432@localhost'
+    default: bk.connection()
   })
   .check(function(argv) {
     if ( (!argv['i'] || !argv['in_file']) && (!argv.q  || !argv['query'])) throw 'What do you want to do?';
@@ -107,7 +107,7 @@ function parseFile(in_file){
 }
 
 function queryDb(){
-	bk.connect(connection)
+	bk.connection(connection)
 	if (in_file){ createDb() }
 
 	bk.query(query_text, function(result){
@@ -120,8 +120,8 @@ function queryDb(){
 }
 
 function createDb(){
-	if (mode == 'create') { bk.temp(false) }
-	bk.createTable(in_file, table_name, schema)
+	(mode == 'temp') ? mode = false : mode = true;
+	bk.createTable(in_file, table_name, schema, mode)
 }
 
 function writeCommands(){
