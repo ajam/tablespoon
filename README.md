@@ -236,5 +236,6 @@ Then specify your default connection in `config.json` to `pg://postgres:5432@loc
 You could also obviously set up a different user as well if you don't want to give Butterknife root access. If you have a user called, `mike` that owns a database `butterknife`, your connection string would be `pg://mike:5432@localhost/butterknife`
 
 ## TODOs
+* Actual json support
 * Support sqlite, allow that to be configured via `config.json` or through nodejs api.
 * Tests for cli
