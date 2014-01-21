@@ -1,13 +1,13 @@
 # Butterknife
 
-A wrapper around [node-postgres](https://github.com/brianc/node-postgres) to easily create and query a table from a local json or csv file.
+A [node-postgres](https://github.com/brianc/node-postgres) to easilly query json or csv data.
 
 ## Usage
 
 ### Within Node.js
 
 ````
-var bk = require('../src/butter-knife.js').connection('pg://postgres@localhost/');
+var bk = require('../src/butter-knife.js');
 
 var data = [
 	{
@@ -42,11 +42,13 @@ bk.createTable(data, 'cities')
 // Get the rows that don't have 15
 bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 	console.log(rows)
-	/*[
-	  { uid: '1', city: 'New York',     temp: [ 0, 35 ], country: 'USA' },
-	  { uid: '3', city: 'Paris',        temp: [ 2, 33 ], country: 'France' },
-	  { uid: '4', city: 'Marseille',    temp: [ 5, 27 ], country: 'France' },
-	  { uid: '5', city: 'London',       temp: [ 2, 25 ], country: 'UK' } ]*/
+	/*{ 
+	query: 'SELECT * FROM cities WHERE 15 != ALL (temp)',
+  rows:
+   [ { uid: '1', city: 'New York', temp: [Object], country: 'USA' },
+     { uid: '3', city: 'Paris', temp: [Object], country: 'France' },
+     { uid: '4', city: 'Marseille', temp: [Object], country: 'France' },
+     { uid: '5', city: 'London', temp: [Object], country: 'UK' } ] }*/
 })
 ````
 
@@ -192,7 +194,7 @@ Optionally:
 #### Query a data file
 
 * Specify the `IN_FILE` with `-i`. 
-* Specify the query with `-q`, e.g. `-q "SELECT * FROM butterknife;"`
+* Specify the query with `-q`, e.g. `-q "SELECT * FROM bk;"`
 
 Optionally:
 
@@ -217,7 +219,7 @@ Optionally:
 
 #### Query an existing PostgreSQL table
 
-* Specify the query with `-q`, e.g. `-q "SELECT * FROM butterknife;"`
+* Specify the query with `-q`, e.g. `-q "SELECT * FROM bk;"`
 
 Optionally:
 

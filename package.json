@@ -1,7 +1,7 @@
 {
   "name": "butterknife",
   "version": "0.1.0",
-  "description": "A wrapper around node-postgres to create a table from a json object.",
+  "description": "A wrapper around node-postgres to easilly query json or csv data.",
   "main": "./src/butterknife.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,8 +14,11 @@
     "url": "https://github.com/ajam/butterknife.git"
   },
   "keywords": [
-    "sqlite",
+    "postgresql",
+    "psql",
+    "querying",
     "json",
+    "sqlite",
     "memory"
   ],
   "author": {
@@ -26,6 +29,7 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "underscore": ">=1.5.2",
-    "pg": "~2.10.0"
+    "pg": "~2.10.0",
+    "colors": "~0.6.2"
   }
 }
