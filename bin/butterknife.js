@@ -60,8 +60,8 @@ var argv = optimist
 if (argv.h || argv.help) return optimist.showHelp();
 
 var file_name    = argv['i'] || argv['in_file'],
- 		in_file      = ((file_name) ? parseFile(fs.readFileSync('./' + file_name)) : false),
  		format       = argv.f  || argv['format'],
+ 		in_file      = ((file_name) ? parseFile(fs.readFileSync('./' + file_name)) : false),
 		table_name   = argv.n  || argv['name'],
 		mode         = argv.m  || argv['mode'],
  		out_file     = argv.o  || argv['out'],
@@ -85,9 +85,9 @@ function writeQuery(result){
 	}
 }
 
-function parseDsv(delimit_char){
+function parseDsv(in_file, delimit_char){
 	var parser = dsv(delimit_char);
-	return parser(in_file.toString())
+	return parser.parse(in_file.toString())
 }
 
 function parseFile(in_file){
@@ -97,11 +97,11 @@ function parseFile(in_file){
 	} else if (format == 'csv') {
 		in_file = dsv.csv.parse(in_file.toString())
 	} else if (format == 'tsv') {
-		in_file = parseDsv('\t')
+		in_file = parseDsv(in_file, '\t')
 	} else if (format == 'psv') {
-		in_file = parseDsv('|')
+		in_file = parseDsv(in_file, '|')
 	} else {
-		in_file = parseDsv(format)
+		in_file = parseDsv(in_file, format)
 	}
 	return in_file
 }
