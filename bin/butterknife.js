@@ -25,7 +25,17 @@ var argv = optimist
   .options('n', {
     alias: 'name',
     describe: 'Table name',
+    default: bk.getTableName()
+  })
+  .options('q', {
+    alias: 'query',
+    describe: 'Query text. Must be quoted',
     default: false
+  })
+  .options('s', {
+    alias: 'schema',
+    describe: 'Manually define a table schema. Must be quoted',
+    default: null
   })
   .options('m', {
     alias: 'mode',
@@ -37,15 +47,10 @@ var argv = optimist
     describe: 'Out file',
     default: false
   })
-  .options('q', {
-    alias: 'query',
-    describe: 'Query text. Must be quoted',
-    default: false
-  })
-  .options('s', {
-    alias: 'schema',
-    describe: 'Manually define a table schema. Must be quoted',
-    default: null
+  .options('v', {
+    alias: 'flavor',
+    describe: 'SQLite or PostgreSQL.',
+    default: bk.flavor()
   })
   .options('c', {
     alias: 'connection',
@@ -68,7 +73,8 @@ var file_name    = argv['i'] || argv['in_file'],
  		query_text   = argv.q  || argv['query'],
  		out_format   = argv.of || argv['out_format'],
  		schema       = argv.s  || argv['schema'],
- 		connection   = argv.c  || argv['connection'];
+ 		connection   = argv.c  || argv['connection'],
+ 		flavor       = argv.v  || argv['flavor'];
 
 function discernFormat(file_name){
 	var name_arr = file_name.split('\.')
@@ -107,9 +113,7 @@ function parseFile(in_file){
 }
 
 function queryDb(){
-	bk.connection(connection)
-	if (in_file){ createDb() }
-
+	if (in_file) createDb();
 	bk.query(query_text, function(result){
 		if (!out_file){
 			console.log(result)
@@ -117,6 +121,14 @@ function queryDb(){
 			writeQuery(result)
 		}
 	})
+}
+
+function setFlavor(){
+	if (flavor == 'sqlite'){
+		bk.sqlite()
+	}else{
+		bk.pgsql(connection)
+	}
 }
 
 function createDb(){
@@ -135,10 +147,17 @@ function writeCommands(){
 	}
 }
 
-if (query_text){
-	queryDb()
-} else if (mode == 'create'){
-	createDb()
-} else {
-	writeCommands();
+function startTheShow(){
+	setFlavor();
+	if (query_text){
+		queryDb()
+	} else if (mode == 'create'){
+		createDb()
+	} else {
+		writeCommands();
+	}
 }
+
+startTheShow();
+
+

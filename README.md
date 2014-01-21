@@ -67,7 +67,7 @@ The options:
 
 __sqlite__ _.sqlite()_
 
-Tells Butterknife you want to create an in-memory sqlite database. This is the default, but can be configured through `config.json`.
+Tells Butterknife you want to create an in-memory sqlite database.
 
 ````
 var bk = require('butterknife').sqlite()
@@ -75,9 +75,9 @@ var bk = require('butterknife').sqlite()
 
 __pgsql__ _.pgsql(dbConnectionString)
 
-Connects Butterknife to your PostgreSQL database. If `.pgsql()` not called or `.sqlite()` is called instead, Butterknife will default to a SQLite connection. This can be changed through `config.json`.
+Connects Butterknife to your PostgreSQL database, this is the default flavor of Butterknife, which can be changed through `config.json`.
 
-If no arguments are passed to `.pgsql()`, the connection defaults to `pg://postgres:5432@localhost/` and can be configured through `config.json`. [Read more about database connections](#about-database-connections).
+If no arguments are passed to `.pgsql()`, or if the connection defaults to `pg://postgres:5432@localhost/` and can be configured through `config.json`. [Read more about database connections](#about-database-connections).
 
 ````
 var bk = require('butterknife').pgsql('pg://mike:5432@localhost/butterknife')

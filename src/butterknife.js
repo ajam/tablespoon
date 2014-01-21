@@ -244,11 +244,6 @@ function setTableType(permanent){
 	if (permanent) { table_type = '' } else { table_type = 'TEMP ' };
 	return this
 }
-function setConnection(connection_string){
-	if (!arguments.length) return conString
-	conString = connection_string;
-	return this;
-}
 // On error, if you want to display more of the query text, you can set the number of characters here.
 function setErrLength(length){
 	if (!arguments.length) return err_preview_length
@@ -260,6 +255,15 @@ function setLogging(bool){
 	verbose = bool;
 	return this
 }
+function getFlavor(){
+	return flavor
+}
+function getConString(){
+	return conString
+}
+function getTableName(){
+	return table_name_default
+}
 
 module.exports = {
 	sqlite: setSqlite,
@@ -270,6 +274,9 @@ module.exports = {
 	createTableCommands: createTableCommands,
 	connection: setConnection,
 	temp: setTableType,
-	verbose: setLogging
+	verbose: setLogging,
+	flavor: getFlavor,
+	connect: getConString,
+	tableName: getTableName
 }
 
