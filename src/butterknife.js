@@ -171,7 +171,7 @@ function createAndInsert(table_commands){
 }
 
 function createTable(table_data, table_name, table_schema, permanent){
-	if (permanent) {table_type = ''};
+	setTableType(permanent);
 	if (!connected) connectToDb();
 	var table_commands = createTableCommands(table_data, table_name, table_schema);
 	reportMsg(table_commands)
@@ -229,30 +229,37 @@ queries.each = function(query_texts, cb){
 	}
 }
 
+// Module option setters and getters
+function setTableType(permanent){
+	if (!arguments.length) return table_type;
+	if (permanent) { table_type = '' } else { table_type = 'TEMP ' };
+	return this
+}
+function setConnection(connection_string){
+	if (!arguments.length) return conString
+	conString = connection_string;
+	return this;
+}
+// On error, if you want to display more of the query text, you can set the number of characters here.
+function setErrLength(length){
+	if (!arguments.length) return err_preview_length
+	err_preview_length = length;
+	return this
+}
+function setLogging(bool){
+	if (!arguments.length) return verbose
+	verbose = state;
+	return this
+}
+
 module.exports = {
 	createTable: createTable,
 	query: query,
 	queries: queries,
 	createTableCommands: createTableCommands,
-	connection: function(connection_string){
-		if (!arguments.length) return conString
-		conString = connection_string;
-		return this;
-	},
-	// On error, if you want to display more of the query text, you can set the number of characters here.
-	errLength: function(length){
-		if (!arguments.length) return err_preview_length
-		err_preview_length = length;
-		return this
-	},
-	temp: function(type){
-		if (!arguments.length) table_type = '';
-		return this
-	},
-	verbose: function(state){
-		if (!arguments.length) return verbose
-		verbose = state;
-		return this
-	}
+	connection: setConnection,
+	errLength: setErrLength,
+	temp: setTableType,
+	verbose: setLogging
 }
 
