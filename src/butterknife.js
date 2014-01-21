@@ -1,6 +1,7 @@
 var fs          = require('fs'),
 		_           = require('underscore'),
-		Client      = require('pg').Client,
+		sqlite      = require('./sqlite.js'),
+		pgsql       = require('./pgsql.js'),
 		colors      = require('colors');
 
 function loadConfig(){
@@ -23,8 +24,8 @@ var defaults =  JSON.parse( loadConfig() );
 
 var client,
 		tables = [],
+		flavor = defaults.flavor,
 		conString = defaults.connection,
-		err_preview_length = defaults.err_len,
 		table_name_default = defaults.db_name,
 		table_type = 'TEMP ',
 		connected = false,
@@ -103,13 +104,21 @@ var helpers = {
 		})
 		return column_types.join(',')
 	},
+	escapeField: function(value, quote_char){
+		if (flavor == 'sqlite'){
+			if (!quote_char) quote_char = "'"
+			return quote_char + value.replace(/'/g, "''") + quote_char
+		} else if (flavor == 'pgsql'){
+			if (!quote_char) quote_char = "$$"
+			return quote_char + value + quote_char
+		}
+	},
 	prepValuesForInsert: function(holder, data_row, quote_char){
 		var arr_holder, // In case your value is an array, run this function recursively to properly quote its values.
 				test_val;
-		if (!quote_char) {quote_char = '$$'}
 		_.values(data_row).forEach(function(value){
 			if (_.isString(value)){
-				holder.push(quote_char + value + quote_char)
+				holder.push(helpers.escapeField(value, quote_char))
 			} else if (_.isUndefined(value) || _.isNull(value) || _.isNaN(value)){
 				holder.push('NULL')
 			} else if (_.isNumber(value)){
@@ -121,14 +130,14 @@ var helpers = {
 				if ( !helpers.isHash(test_val) ){
 					arr_holder = [];
 					arr_holder = helpers.prepValuesForInsert(arr_holder, value, '"');
-					holder.push(quote_char + "{" + arr_holder + "}" + quote_char);
+					holder.push( helpers.escapeField("{" + arr_holder + "}") );
 				}else{
-					holder.push(quote_char + JSON.stringify(value) + quote_char)
+					holder.push(helpers.escapeField(JSON.stringify(value), quote_char))
 				}
 			} else if (_.isBoolean(value)){
 				holder.push(value)
 			} else if (_.isObject(value)){
-				holder.push(quote_char + JSON.stringify(value) + quote_char)
+				holder.push(helpers.escapeField(JSON.stringify(value), quote_char))
 			} else {
 				console.log('ERROR uncaught datatype', value, 'is', typeof value)
 			} // Insert date support here.
@@ -143,47 +152,46 @@ var helpers = {
 		}
 		stmt += val_arr.join(',');
 		return stmt;
-	},
-	handleErr: function(err, msg, qt){
-		var pos,
-				err_text = 'Error in '.red + msg.red;
-		if (err){ 
-			pos = Number(err.position);
-			// Display the area where the query threw an error marked by a `^`. 
-			// If the error occurs within the first fifty characters, make it start at the beginning of the string.
-			if (qt) {err_text += ':\n'.red + qt.substr(Math.max(0, pos - err_preview_length), Math.min(pos, err_preview_length)) + '^'.magenta + qt.substr(pos, Math.min(qt.length - pos, err_preview_length))} 
-			console.error(err_text)	
-			throw err
-		}
 	}
+}
+
+function setSqlite(connection_string){
+	flavor = 'sqlite';
+	if (!connection_string) connection_string = ':memory:';
+	connectToDb(connection_string);
+	return this;
+}
+
+function setPgsql(connection_string){
+	flavor = 'pgsql';
+	connectToDb(connection_string);
+	return this;
 }
 
 function connectToDb(connection_string){
 	conString = connection_string || conString;
-	client = client || new Client(conString);
-	//disconnect client when all queries are finished
-  client.on('drain', client.end.bind(client)); 
-	client.connect(function(err){
-  	helpers.handleErr(err, 'database connection');
-	});
+	if (flavor == 'sqlite'){
+		client = sqlite.connectToDb();
+	} else if (flavor == 'pgsql'){
+		client = pgsql.connectToDb(conString)
+	}
 	connected = true;
 }
 
 function createTableCommands(table_data, table_name, table_schema){
 	table_name = table_name || table_name_default;
 	var table_commands = {};
-	table_commands.create = 'CREATE ' + table_type + 'TABLE ' + table_name + ' (uid BIGSERIAL PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.columnTypesToString(table_data)) + ')';
+	table_commands.create = 'CREATE ' + table_type + 'TABLE ' + table_name + ' (uid ' + ((flavor == 'sqlite') ? 'INTEGER' : 'BIGSERIAL') + ' PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.columnTypesToString(table_data)) + ')';
 	table_commands.insert = helpers.assembleValueInsertString(table_data, table_name);
 	return table_commands;
 }
 
 function createAndInsert(table_commands){
-	client.query(table_commands.create, function(err, result){
-  	helpers.handleErr(err, 'table creation', table_commands.create)
-	});
-  client.query(table_commands.insert, function(err, result){
-  	helpers.handleErr(err, 'row insertion', table_commands.insert)
-  });
+	if (flavor == 'sqlite'){
+		sqlite.createAndInsert(table_commands)
+	} else if (flavor == 'pgsql'){
+		pgsql.createAndInsert(table_commands);
+	}
 }
 
 function createTable(table_data, table_name, table_schema, permanent){
@@ -196,56 +204,37 @@ function createTable(table_data, table_name, table_schema, permanent){
 
 function query(query_text, cb){
 	if (!connected) connectToDb();
-	var result_obj = {}
-  client.query(query_text, function(err, result){
-  	helpers.handleErr(err, 'query', query_text)
-  	result_obj.query = query_text;
-  	result_obj.rows  = result.rows
-  	cb(result_obj);
-  })
+	if (flavor == 'sqlite'){
+		sqlite.query(query_text, function(result){
+			cb(result)
+		})
+	} else if (flavor == 'pgsql'){
+		pgsql.query(query_text, cb)
+	}
 }
 function queries(query_texts, cb){
 	if (!connected) connectToDb();
-	var results = [],
-			counter = 0;
+	if (flavor == 'sqlite'){
 
-	for (var i = 0; i < query_texts.length; i++){
-		(function(query_text){
-			var result_obj = {};
-		  client.query(query_text, function(err, result){
-		  	counter++;
-		  	helpers.handleErr(err, 'query', query_text)
-		  	result_obj.query = query_text;
-		  	result_obj.rows = result.rows;
-		  	results.push(result_obj);
-		  	if (counter == query_texts.length){
-			  	cb(results);
-		  	}
-		  })
-		})(query_texts[i])
-		
+	}else if (flavor == 'pgsql'){
+		pgsql.queries(query_texts, cb)
 	}
 }
 query.each = function(query_text, cb){
 	if (!connected) connectToDb();
-	var query = client.query(query_text);
-  query.on('row', function(row, result){
-  	cb(row, query_text);
-  })
+	if (flavor == 'sqlite'){
+
+	}else if (flavor == 'pgsql'){
+		pgsql.query.each(query_text, cb)
+	}
+
 }
 queries.each = function(query_texts, cb){
 	if (!connected) connectToDb();
-	for (var i = 0; i < query_texts.length; i++){
-		(function(query_text){
-			var result_obj = {};
-		  client.query(query_text, function(err, result){
-		  	helpers.handleErr(err, 'query', query_text)
-		  	result_obj.query = query_text;
-		  	result_obj.rows = result.rows;
-		  	cb(result_obj)
-		  })
-		})(query_texts[i])
-		
+	if (flavor == 'sqlite'){
+
+	}else if (flavor == 'pgsql'){
+		pgsql.queries.each(query_text, cb)
 	}
 }
 
@@ -273,12 +262,13 @@ function setLogging(bool){
 }
 
 module.exports = {
+	sqlite: setSqlite,
+	pgsql: setPgsql,
 	createTable: createTable,
 	query: query,
 	queries: queries,
 	createTableCommands: createTableCommands,
 	connection: setConnection,
-	errLength: setErrLength,
 	temp: setTableType,
 	verbose: setLogging
 }

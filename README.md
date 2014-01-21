@@ -7,7 +7,7 @@ A [node-postgres](https://github.com/brianc/node-postgres) to easilly query json
 ### Within Node.js
 
 ````
-var bk = require('../src/butter-knife.js');
+var bk = require('../src/butter-knife.js').pgsql();
 
 var data = [
 	{
@@ -59,28 +59,54 @@ Config options will be taken from `config.sample.json` and work out of the box w
 The options:
 
 * `connection:` Database connection string. The location of your PostgreSQL database. [Read more about database connections](#about-database-connections). Defaults to `pg://postgres:5432@localhost/`.
-* 'err_len:' The number of characters of your query to display before and after an error occurrs. Set to a higher number if you want to see more context around errors. The point of error will appear with a `^`. Defaults to `100`.
 * 'db_name:' The name of the database, if none specified. Defaults to `bk`.
 
 #### Methods
 
 ##### Table creation methods
 
-__connection__ _.connection(dbConnectionString)_
+__sqlite__ _.sqlite()_
 
-Connects Butterknife to your PostgreSQL database. Connection defaults to `pg://postgres:5432@localhost/` and can be configured through `config.json`. [Read more about database connections](#about-database-connections).
+Tells Butterknife you want to create an in-memory sqlite database. This is the default, but can be configured through `config.json`.
+
+````
+var bk = require('butterknife').sqlite()
+````
+
+__pgsql__ _.pgsql(dbConnectionString)
+
+Connects Butterknife to your PostgreSQL database. If `.pgsql()` not called or `.sqlite()` is called instead, Butterknife will default to a SQLite connection. This can be changed through `config.json`.
+
+If no arguments are passed to `.pgsql()`, the connection defaults to `pg://postgres:5432@localhost/` and can be configured through `config.json`. [Read more about database connections](#about-database-connections).
+
+````
+var bk = require('butterknife').pgsql('pg://mike:5432@localhost/butterknife')
+````
 
 __createTable__ _.createTable(dataobject, [tablename], [tableschema], [permanent])_
 
 Syncronously creates a table in your PostgreSQL database. Optionally pass in a __tablename__ (default `bk`) or a __tableschema.__ By default, Butterknife will attempt to read the datatypes in your object. TODO Here's a list of supported datatypes and how they are mapped to SQL datatypes. By default, Butterknife will create a temporary table that exists only for this session. To instead create a permanent table, pass in `true` as boolean to __permanent__.
 
+````
+bk.createTable(data) // Creates a table, name defaulting to `bk`.
+bk.createTable(data, 'cities') // Creates a table named `cities`.
+bk.createTable(data, 'cities', 'name TEXT, temp NUMERIC[], country TEXT') // Creates a table named `cities` with this schema.
+bk.createTable(data, 'cities', 'name TEXT, temp NUMERIC[], country TEXT', true) // Creates a permanent table named `cities` with this schema.
+
+````
+
 __createTableCommands__ _.createTableCommands(dataobject, [tablename], [tableschema], [permanent])_
 
 Returns a json object with two keys `create` and `insert` that contain the sql commands to make the table from your data. This method does not actually create your table. Useful if you find datatypes or create and insert statements tedious. Used internally by `.createTable`.
 
-__errLength__ _.errLength(integer)_
+````
+var commands = createTableCommands(data)
 
-Also settable via `config.json`, this will set the number of characters of your query to display in an error message. The point of error will appear with a `^`. Useful if you want to debug an error without globally changing it for the whole module. Defaults to `100`.
+console.log(commands)
+/*
+{ create: 'CREATE TEMP TABLE cities (uid INTEGER PRIMARY KEY,city TEXT,temp NUMERIC,country TEXT)',
+  insert: 'INSERT INTO cities (city,temp,country) VALUES (\'New York\',27.2,\'USA\'),(\'Los A\'\'ngeles\',72,\'USA\'),(\'Paris\',34,\'F"rance\'),(\'Marseille\',43,\'F\'\'rance\'),(\'Lon"don\',33,\'UK\')' }*/
+````
 
 ##### Query methods
 
@@ -237,5 +263,6 @@ You could also obviously set up a different user as well if you don't want to gi
 
 ## TODOs
 * Native date support, if it isn't doing that already
-* Support sqlite, allow that to be configured via `config.json` or through nodejs api.
+* Make a method for creating a table without inserting any data
+* Make a method for just inserting data into an existing table
 * Tests for cli

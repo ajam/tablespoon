@@ -1,4 +1,4 @@
-var bk = require('../src/butterknife.js');
+var bk = require('../../src/butterknife.js').pgsql();
 
 var data = [
 	{
