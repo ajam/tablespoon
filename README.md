@@ -1,12 +1,12 @@
 # Butterknife
 
-A [node-postgres](https://github.com/brianc/node-postgres) to easilly query json or csv data.
+Easily query spreadsheet-like data with SQLite or PostgreSQL. Built around[ node-postgres](https://github.com/brianc/node-postgres) and [node-sqlite3](https://github.com/mapbox/node-sqlite3).
 
-## Documentation
+### Documentation
 
 Check out [the wiki](https://github.com/ajam/butterknife/wiki) for the latest documentation.
 
-## Example usage
+### Example usage
 
 ````
 var bk = require('../src/butter-knife.js').pgsql();
