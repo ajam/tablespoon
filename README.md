@@ -78,7 +78,7 @@ Returns a json object with two keys `create` and `insert` that contain the sql c
 
 __errLength__ _.errLength(integer)_
 
-Also settable via `config.json`, this will set the number of characters of your query to display in an error message. The point of error will appear with a `^`. Useful if you want to debug an error without globally changing it for the whole module.
+Also settable via `config.json`, this will set the number of characters of your query to display in an error message. The point of error will appear with a `^`. Useful if you want to debug an error without globally changing it for the whole module. Defaults to `100`.
 
 ##### Query methods
 
@@ -235,5 +235,4 @@ You could also obviously set up a different user as well if you don't want to gi
 
 ## TODOs
 * Support sqlite, allow that to be configured via `config.json` or through nodejs api.
-* Document `config.json` vs `config.sample.json`
 * Tests for cli

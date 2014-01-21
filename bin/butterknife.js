@@ -53,7 +53,7 @@ var argv = optimist
     default: 'pg://postgres:5432@localhost'
   })
   .check(function(argv) {
-    if ( (argv['i'] || argv['in_file']) && (argv.q  || argv['query'])) throw new Error('What do you want to do?');
+    if ( (!argv['i'] || !argv['in_file']) && (!argv.q  || !argv['query'])) throw 'What do you want to do?';
   })
   .argv;
 
