@@ -31,6 +31,13 @@ var client,
 		verbose = false;
 
 var helpers = {
+	isHash: function(val){
+		if (!_.isDate(val) && !_.isBoolean(val) && !_.isArray(val) && !_.isFunction(val) && _.isObject(val)){
+			return true
+		}else{
+			return false
+		}
+	},
 	sqlizeType: function(value, j, arr_type){
 		var err,
 				arr_type = arr_type || undefined;
@@ -97,7 +104,8 @@ var helpers = {
 		return column_types.join(',')
 	},
 	prepValuesForInsert: function(holder, data_row, quote_char){
-		var arr_holder; // In case your value is an array, run this function recursively to properly quote its values.
+		var arr_holder, // In case your value is an array, run this function recursively to properly quote its values.
+				test_val;
 		if (!quote_char) {quote_char = '$$'}
 		_.values(data_row).forEach(function(value){
 			if (_.isString(value)){
@@ -107,13 +115,20 @@ var helpers = {
 			} else if (_.isNumber(value)){
 				holder.push(value)
 			} else if (_.isArray(value)){
-				arr_holder = [];
-				arr_holder = helpers.prepValuesForInsert(arr_holder, value, '"');
-				holder.push(quote_char + "{" + arr_holder + "}" + quote_char);
+				test_val = value[0];
+				// If it's not a hash then run the values recursively through this function to quote them according to their type
+				// if it is a hash then just add that whole blob as stringified json
+				if ( !helpers.isHash(test_val) ){
+					arr_holder = [];
+					arr_holder = helpers.prepValuesForInsert(arr_holder, value, '"');
+					holder.push(quote_char + "{" + arr_holder + "}" + quote_char);
+				}else{
+					holder.push(quote_char + JSON.stringify(value) + quote_char)
+				}
+			} else if (_.isBoolean(value)){
+				holder.push(value)
 			} else if (_.isObject(value)){
 				holder.push(quote_char + JSON.stringify(value) + quote_char)
-			} else if (_.isBoolean){
-				holder.push(value)
 			} else {
 				console.log('ERROR uncaught datatype', value, 'is', typeof value)
 			} // Insert date support here.
@@ -253,7 +268,7 @@ function setErrLength(length){
 }
 function setLogging(bool){
 	if (!arguments.length) return verbose
-	verbose = state;
+	verbose = bool;
 	return this
 }
 
