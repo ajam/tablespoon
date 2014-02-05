@@ -158,13 +158,13 @@ var helpers = {
 function setSqlite(connection_string){
 	flavor = 'sqlite';
 	if (!connection_string) connection_string = ':memory:';
-	connectToDb(connection_string);
+	// connectToDb(connection_string);
 	return this;
 }
 
 function setPgsql(connection_string){
 	flavor = 'pgsql';
-	connectToDb(connection_string);
+	// connectToDb(connection_string);
 	return this;
 }
 
