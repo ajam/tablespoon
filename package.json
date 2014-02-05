@@ -1,6 +1,6 @@
 {
   "name": "tablespoon",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A node-postgres wrapper to easilly query json or csv data.",
   "main": "./src/tablespoon.js",
   "scripts": {
@@ -31,6 +31,7 @@
     "underscore": ">=1.5.2",
     "pg": "~2.10.0",
     "colors": "~0.6.2",
-    "sqlite3": "~2.1.19"
+    "sqlite3": "~2.1.19",
+    "optimist": "~0.6.0"
   }
 }
