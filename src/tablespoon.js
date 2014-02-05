@@ -178,12 +178,14 @@ function connectToDb(connection_string){
 	connected = true;
 }
 
-function createTableCommands(table_data, table_name, table_schema, permanent){
+function createTableCommands(table_data, table_name, table_schema, permanent, skip_insert){
 	setTableType(permanent);
 	table_name = table_name || table_name_default;
 	var table_commands = {};
 	table_commands.create = 'CREATE ' + table_type + 'TABLE ' + table_name + ' (uid ' + ((flavor == 'sqlite') ? 'INTEGER' : 'BIGSERIAL') + ' PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.columnTypesToString(table_data)) + ')';
-	table_commands.insert = helpers.assembleValueInsertString(table_data, table_name);
+	if (!skip_insert){
+		table_commands.insert = helpers.assembleValueInsertString(table_data, table_name);
+	}
 	return table_commands;
 }
 

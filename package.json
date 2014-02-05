@@ -1,6 +1,6 @@
 {
   "name": "tablespoon",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A node-postgres wrapper to easilly query json or csv data.",
   "main": "./src/tablespoon.js",
   "scripts": {

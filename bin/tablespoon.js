@@ -39,7 +39,7 @@ var argv = optimist
   })
   .options('m', {
     alias: 'mode',
-    describe: 'Table mode, to create permanent table use `create`',
+    describe: 'Table mode, to create permanent table use `create`, to only print create commands use `skip-insert`',
     default: 'temp'
   })
   .options('o', {
@@ -136,9 +136,9 @@ function createDb(){
 	ts.createTable(in_file, table_name, schema, mode)
 }
 
-function writeCommands(){
-	var commands_obj = ts.createTableCommands(in_file, table_name, schema),
-	        commands = commands_obj.create + '; ' + commands_obj.insert;
+function writeCommands(skip_insert){
+	var commands_obj = ts.createTableCommands(in_file, table_name, schema, null, skip_insert),
+	        commands = commands_obj.create + '; ' + ((commands_obj.insert) ? commands_obj.insert : '';
 	if (!out_file){
 		console.log(commands)
 	} else {
@@ -153,6 +153,8 @@ function startTheShow(){
 		queryDb()
 	} else if (mode == 'create'){
 		createDb()
+	} else if (mode == 'skip-insert'){
+		writeCommands(true)
 	} else {
 		writeCommands();
 	}
