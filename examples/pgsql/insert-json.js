@@ -1,4 +1,4 @@
-var bk = require('../../src/butterknife.js').pgsql();
+var ts = require('../../src/tablespoon.js').pgsql();
 
 var data = [
 	{
@@ -58,10 +58,10 @@ var data = [
 	}
 ]
 
-bk.createTable(data, 'cities')
+ts.createTable(data, 'cities')
 
 // Get all of the cities with a high of 72
-bk.query("SELECT * FROM cities c, json_array_elements(c.temps) as temp_ranges WHERE temp_ranges ->> 'high' = '72';", function(result){
+ts.query("SELECT * FROM cities c, json_array_elements(c.temps) as temp_ranges WHERE temp_ranges ->> 'high' = '72';", function(result){
 	console.log(result)
 	/*{ 
 	query: 'SELECT * FROM cities c, json_array_elements(c.temps) as temp_ranges WHERE temp_ranges ->> \'high\' = \'72\';',

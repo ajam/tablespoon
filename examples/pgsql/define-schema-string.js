@@ -1,4 +1,4 @@
-var bk = require('../../src/butterknife.js').pgsql('pg://postgres@localhost/');
+var ts = require('../../src/tablespoon.js').pgsql('pg://postgres@localhost/');
 
 var data = [
 	{
@@ -31,10 +31,10 @@ var data = [
 // Define the table schema manually.
 var schema_string = 'city TEXT, temp integer[], country TEXT';
 
-bk.createTable(data, 'cities', schema_string)
+ts.createTable(data, 'cities', schema_string)
 
 // Get the rows that don't have 15
-bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(result){
+ts.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(result){
 	console.log(result.query)
 	console.log(result.rows)
 	/*[
@@ -45,7 +45,7 @@ bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(result){
 })
 
 // Get the one that does
-bk.query.each('SELECT * FROM cities WHERE 15 = ANY (temp)', function(row){
+ts.query.each('SELECT * FROM cities WHERE 15 = ANY (temp)', function(row){
 	console.log(row)
 	/*
 	SELECT * FROM cities WHERE 15 = ANY (temp)

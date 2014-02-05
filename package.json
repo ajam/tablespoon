@@ -1,17 +1,17 @@
 {
-  "name": "butterknife",
+  "name": "tablespoon",
   "version": "0.1.0",
   "description": "A node-postgres wrapper to easilly query json or csv data.",
-  "main": "./src/butterknife.js",
+  "main": "./src/tablespoon.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
  "bin": {
-    "butterknife": "./bin/butterknife.js"
+    "tablespoon": "./bin/tablespoon.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ajam/butterknife.git"
+    "url": "https://github.com/ajam/tablespoon.git"
   },
   "keywords": [
     "postgresql",

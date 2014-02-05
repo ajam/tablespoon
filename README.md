@@ -1,15 +1,15 @@
-# Butterknife
+# Tablespoon
 
 Easily query spreadsheet-like data with SQLite or PostgreSQL. Built around[ node-postgres](https://github.com/brianc/node-postgres) and [node-sqlite3](https://github.com/mapbox/node-sqlite3).
 
 ### Documentation
 
-Check out [the wiki](https://github.com/ajam/butterknife/wiki) for the latest documentation.
+Check out [the wiki](https://github.com/ajam/tablespoon/wiki) for the latest documentation.
 
 ### Example usage
 
 ````
-var bk = require('../src/butter-knife.js').pgsql();
+var ts = require('../src/butter-knife.js').pgsql();
 
 var data = [
 	{
@@ -39,10 +39,10 @@ var data = [
 	}
 ]
 
-bk.createTable(data, 'cities')
+ts.createTable(data, 'cities')
 
 // Get the rows that don't have 15
-bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
+ts.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 	console.log(rows)
 	/*{ 
 	query: 'SELECT * FROM cities WHERE 15 != ALL (temp)',

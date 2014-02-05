@@ -1,4 +1,4 @@
-var bk = require('../../src/butterknife.js').pgsql('pg://postgres@localhost/');
+var ts = require('../../src/tablespoon.js').pgsql('pg://postgres@localhost/');
 
 var data = [
 	{
@@ -28,9 +28,9 @@ var data = [
 	}
 ]
 
-bk.createTable(data, 'cities')
+ts.createTable(data, 'cities')
 
-bk.query('SELECT * FROM cities', function(result){
+ts.query('SELECT * FROM cities', function(result){
 	console.log(result.query)
 	console.log(result.rows)
 })

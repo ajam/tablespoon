@@ -1,4 +1,4 @@
-var bk = require('../../src/butterknife.js').sqlite();
+var ts = require('../../src/tablespoon.js').sqlite();
 
 var data = [
 	{
@@ -28,14 +28,14 @@ var data = [
 	}
 ]
 
-bk.createTable(data, 'cities')
+ts.createTable(data, 'cities')
 
 var queries = [
 	'SELECT * FROM cities LIMIT 1',
 	'SELECT * FROM cities LIMIT 1 OFFSET 1',
 ]
 
-bk.queries.each(queries, function(result){
+ts.queries.each(queries, function(result){
 	console.log(result)
 /*
 { query: 'SELECT * FROM cities LIMIT 1',

@@ -1,4 +1,4 @@
-var bk = require('../src/butterknife.js')
+var ts = require('../src/tablespoon.js')
 
 var data = [
 	{
@@ -29,7 +29,7 @@ var data = [
 ]
 
 
-var commands = bk.createTableCommands(data, 'cities');
+var commands = ts.createTableCommands(data, 'cities');
 
 console.log(commands)
 

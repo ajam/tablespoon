@@ -1,4 +1,4 @@
-var bk = require('../../src/butterknife.js').pgsql();
+var ts = require('../../src/tablespoon.js').pgsql();
 
 var data = [
 	{
@@ -28,10 +28,10 @@ var data = [
 	}
 ]
 
-bk.createTable(data, 'cities')
+ts.createTable(data, 'cities')
 
 // Get the rows that don't have 15
-bk.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(result){
+ts.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(result){
 	console.log(result)
 	/*[
 	  { uid: '1', city: 'New York',     temp: [ 0, 35 ], country: 'USA' },

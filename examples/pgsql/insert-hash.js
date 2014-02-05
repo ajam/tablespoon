@@ -1,4 +1,4 @@
-var bk = require('../../src/butterknife.js').pgsql();
+var ts = require('../../src/tablespoon.js').pgsql();
 
 var data = [
 	{
@@ -43,14 +43,14 @@ var data = [
 	}
 ]
 
-bk.verbose(true)
-bk.createTable(data, 'cities')
+ts.verbose(true)
+ts.createTable(data, 'cities')
 
 // Get the row that has a low of 25
 // Currently, type support within json is a bit weird
 // And something you might have to work out on your pgsql end
 // https://gist.github.com/tobyhede/2715918
-bk.query("SELECT * FROM cities WHERE temp ->> 'low' = '25';", function(result){
+ts.query("SELECT * FROM cities WHERE temp ->> 'low' = '25';", function(result){
 	console.log(result)
 	/*{ 
 	query: 'SELECT * FROM cities WHERE temp ->> \'low\' = \'25\';',

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 var fs = require('fs'),
-		bk = require('../src/butterknife.js'),
+		ts = require('../src/tablespoon.js'),
 		optimist = require('optimist'),
 		dsv = require('dsv');
 
 var argv = optimist
-  .usage('Usage: butterknife -i IN_FILE -f (csv|json|tsv|psv|DELIMITER) -n TABLE_NAME -o OUT_FILE -q "QUERY" -s "SCHEMA" -m (temp|create) -c DB_CONNECTION')
+  .usage('Usage: tablespoon -i IN_FILE -f (csv|json|tsv|psv|DELIMITER) -n TABLE_NAME -o OUT_FILE -q "QUERY" -s "SCHEMA" -m (temp|create) -c DB_CONNECTION')
   .options('h', {
     alias: 'help',
     describe: 'Display help',
@@ -25,7 +25,7 @@ var argv = optimist
   .options('n', {
     alias: 'name',
     describe: 'Table name',
-    default: bk.tableName()
+    default: ts.tableName()
   })
   .options('q', {
     alias: 'query',
@@ -50,12 +50,12 @@ var argv = optimist
   .options('v', {
     alias: 'flavor',
     describe: 'SQLite or PostgreSQL.',
-    default: bk.flavor()
+    default: ts.flavor()
   })
   .options('c', {
     alias: 'connection',
     describe: 'Your postgres database location.',
-    default: bk.connection()
+    default: ts.connection()
   })
   .check(function(argv) {
     if ( (!argv['i'] || !argv['in_file']) && (!argv.q  || !argv['query'])) throw 'What do you want to do?';
@@ -114,7 +114,7 @@ function parseFile(in_file){
 
 function queryDb(){
 	if (in_file) createDb();
-	bk.query(query_text, function(result){
+	ts.query(query_text, function(result){
 		if (!out_file){
 			console.log(result)
 		}else{
@@ -125,19 +125,19 @@ function queryDb(){
 
 function setFlavor(){
 	if (flavor == 'sqlite'){
-		bk.sqlite()
+		ts.sqlite()
 	}else{
-		bk.pgsql(connection)
+		ts.pgsql(connection)
 	}
 }
 
 function createDb(){
 	(mode == 'create') ? mode = true : mode = false;
-	bk.createTable(in_file, table_name, schema, mode)
+	ts.createTable(in_file, table_name, schema, mode)
 }
 
 function writeCommands(){
-	var commands_obj = bk.createTableCommands(in_file, table_name, schema),
+	var commands_obj = ts.createTableCommands(in_file, table_name, schema),
 	        commands = commands_obj.create + '; ' + commands_obj.insert;
 	if (!out_file){
 		console.log(commands)
