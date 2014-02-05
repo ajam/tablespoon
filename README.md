@@ -16,10 +16,11 @@ npm install -g tablespoon
 
 ### Documentation
 
-Check out [the wiki](https://github.com/ajam/tablespoon/wiki) for the latest documentation.
+Check out [the wiki](https://github.com/ajam/tablespoon/wiki) for the latest documentation and the [FAQ](https://github.com/ajam/tablespoon/wiki/Faq), which includes [helpful tips](https://github.com/ajam/tablespoon/wiki/Faq#wiki-how-do-i-convert-csv-tsv-or-some-other-data-format-into-json) on how to load in `csv` or `tsv` data into Node.js.
 
 ### Example usage
 
+See more [examples](https://github.com/ajam/tablespoon/tree/master/examples).
 ````
 var ts = require('tablespoon.js').pgsql();
 
