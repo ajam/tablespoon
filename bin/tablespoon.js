@@ -138,7 +138,7 @@ function createDb(){
 
 function writeCommands(skip_insert){
 	var commands_obj = ts.createTableCommands(in_file, table_name, schema, null, skip_insert),
-	        commands = commands_obj.create + '; ' + ((commands_obj.insert) ? commands_obj.insert : '';
+	        commands = commands_obj.create + '; ' + ((commands_obj.insert) ? commands_obj.insert : '');
 	if (!out_file){
 		console.log(commands)
 	} else {
