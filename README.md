@@ -9,7 +9,7 @@ Check out [the wiki](https://github.com/ajam/tablespoon/wiki) for the latest doc
 ### Example usage
 
 ````
-var ts = require('../src/butter-knife.js').pgsql();
+var ts = require('../src/tablespoon.js').pgsql();
 
 var data = [
 	{
