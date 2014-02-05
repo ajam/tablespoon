@@ -1,6 +1,18 @@
 # Tablespoon
 
-Easily query spreadsheet-like data with SQLite or PostgreSQL. Built around[ node-postgres](https://github.com/brianc/node-postgres) and [node-sqlite3](https://github.com/mapbox/node-sqlite3).
+Easily query spreadsheet-like or json data with SQLite or PostgreSQL. Built around[ node-postgres](https://github.com/brianc/node-postgres) and [node-sqlite3](https://github.com/mapbox/node-sqlite3).
+
+### Installation
+
+````
+npm install tablespoon
+````
+
+Or command-line interface
+
+````
+npm install -g tablespoon
+````
 
 ### Documentation
 
@@ -9,7 +21,7 @@ Check out [the wiki](https://github.com/ajam/tablespoon/wiki) for the latest doc
 ### Example usage
 
 ````
-var ts = require('../src/tablespoon.js').pgsql();
+var ts = require('tablespoon.js').pgsql();
 
 var data = [
 	{
@@ -47,9 +59,9 @@ ts.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 	/*{ 
 	query: 'SELECT * FROM cities WHERE 15 != ALL (temp)',
   rows:
-   [ { uid: '1', city: 'New York', temp: [Object], country: 'USA' },
-     { uid: '3', city: 'Paris', temp: [Object], country: 'France' },
-     { uid: '4', city: 'Marseille', temp: [Object], country: 'France' },
-     { uid: '5', city: 'London', temp: [Object], country: 'UK' } ] }*/
+   [ { uid: '1', city: 'New York', temp: [0,35], country: 'USA' },
+     { uid: '3', city: 'Paris', temp: [2,33], country: 'France' },
+     { uid: '4', city: 'Marseille', temp: [5,27], country: 'France' },
+     { uid: '5', city: 'London', temp: [2,25], country: 'UK' } ] }*/
 })
 ````
