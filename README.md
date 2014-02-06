@@ -4,15 +4,17 @@ Easily query spreadsheet-like or json data with SQLite or PostgreSQL. Built arou
 
 ### Installation
 
+To install as a Node.js module
 ````
 npm install tablespoon
 ````
-
-Or command-line interface
+To use Tablespoon's command line interface, install with the global flag
 
 ````
-npm install -g tablespoon
+npm install tablespoon -g
 ````
+
+If you want to use Tablespoon in both circumstances, run both commands.
 
 ### Documentation
 
