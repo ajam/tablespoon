@@ -23,7 +23,7 @@ Check out [the wiki](https://github.com/ajam/tablespoon/wiki) for the latest doc
 ### Example usage
 
 See more [examples](https://github.com/ajam/tablespoon/tree/master/examples).
-````
+````js
 var ts = require('tablespoon.js').pgsql();
 
 var data = [
