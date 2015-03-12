@@ -1,1 +1,1 @@
-{ "flavor": "sqlite", "connection": "pg://postgres:5432@localhost", "default_table_name": "ts" } 
+{ "flavor": "sqlite", "connection": "pg://postgres:5432@localhost", "default_table_name": "tablespoon" } 
