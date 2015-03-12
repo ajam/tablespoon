@@ -1,5 +1,5 @@
-var sqlite3 = require('sqlite3').verbose(),
-		colors  = require('colors');
+var sqlite3 = require('sqlite3').verbose();
+var colors  = require('colors');
 
 var db,
 		connected = false,

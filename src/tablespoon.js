@@ -1,18 +1,8 @@
-var fs          = require('fs'),
-		_           = require('underscore'),
-		sqlite      = require('./sqlite.js'),
-		pgsql       = require('./pgsql.js'),
-		colors      = require('colors');
-
-function loadConfig(){
-	var user_config   = __dirname + '/config.json',
-	    sample_config = __dirname + '/config.sample.json';
-	if (fs.existsSync(user_config)){
-		return fs.readFileSync(user_config)
-	}else{
-		return fs.readFileSync(sample_config)
-	}
-}
+var fs          = require('fs');
+var _           = require('underscore');
+var sqlite      = require('./sqlite.js');
+var pgsql       = require('./pgsql.js');
+var colors      = require('colors');
 
 function reportMsg(msg){
 	if(verbose){
@@ -20,13 +10,10 @@ function reportMsg(msg){
 	}
 }
 
-var defaults =  JSON.parse( loadConfig() );
-
 var client,
 		tables = [],
-		flavor = defaults.flavor,
-		conString = defaults.connection,
-		default_table_name = defaults.default_table_name,
+		flavor,
+		conString,
 		table_type = 'TEMP ',
 		connected = false,
 		verbose = false;
@@ -144,8 +131,8 @@ var helpers = {
 		})
 		return holder.join(',');
 	},
-	assembleValueInsertString: function(data, table_name){
-	  var stmt ='INSERT INTO ' + table_name + ' (' + _.keys(data[0]).join(',') + ') VALUES ',
+	assembleValueInsertString: function(data, tableName){
+	  var stmt ='INSERT INTO ' + tableName + ' (' + _.keys(data[0]).join(',') + ') VALUES ',
 	      val_arr = [];
 		for (var i = 0; i < data.length; i++){
 			val_arr.push('(' + helpers.prepValuesForInsert([], data[i]) + ')');
@@ -177,13 +164,12 @@ function connectToDb(connection_string){
 	connected = true;
 }
 
-function createTableCommands(table_data, table_name, table_schema, permanent, skip_insert){
+function createTableCommands(table_data, tableName, table_schema, permanent, skip_insert){
 	setTableType(permanent);
-	table_name = table_name || default_table_name;
 	var table_commands = {};
-	table_commands.create = 'CREATE ' + table_type + 'TABLE ' + table_name + ' (uid ' + ((flavor == 'sqlite') ? 'INTEGER' : 'BIGSERIAL') + ' PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.columnTypesToString(table_data)) + ')';
+	table_commands.create = 'CREATE ' + table_type + 'TABLE ' + tableName + ' (uid ' + ((flavor == 'sqlite') ? 'INTEGER' : 'BIGSERIAL') + ' PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.columnTypesToString(table_data)) + ')';
 	if (!skip_insert){
-		table_commands.insert = helpers.assembleValueInsertString(table_data, table_name);
+		table_commands.insert = helpers.assembleValueInsertString(table_data, tableName);
 	}
 	return table_commands;
 }
@@ -197,8 +183,11 @@ function createAndInsert(table_commands){
 	}
 }
 
-function createTable(table_data, table_name, table_schema, permanent){
-	var table_commands = createTableCommands(table_data, table_name, table_schema, permanent);
+function createTable(table_data, tableName, table_schema, permanent){
+	if (!tableName) { 
+		throw 'You must specify a tablename.';
+	}
+	var table_commands = createTableCommands(table_data, tableName, table_schema, permanent);
 	reportMsg(table_commands)
 	if (flavor == 'sqlite'){
 		sqlite.createTable(table_commands.create)
@@ -207,8 +196,8 @@ function createTable(table_data, table_name, table_schema, permanent){
 	}
 }
 
-function insertInto(table_data, table_name){
-	var table_commands = createTableCommands(table_data, table_name);
+function insertInto(table_data, tableName){
+	var table_commands = createTableCommands(table_data, tableName);
 	reportMsg(table_commands)
 	if (flavor == 'sqlite'){
 		sqlite.insertInto(table_commands.insert)
@@ -217,8 +206,8 @@ function insertInto(table_data, table_name){
 	}
 }
 
-function makeTableFromData(table_data, table_name, table_schema, permanent){
-	var table_commands = createTableCommands(table_data, table_name, table_schema, permanent);
+function makeTableFromData(table_data, tableName, table_schema, permanent){
+	var table_commands = createTableCommands(table_data, tableName, table_schema, permanent);
 	reportMsg(table_commands)
 	createAndInsert(table_commands);
 }
@@ -282,9 +271,6 @@ function getFlavor(){
 function getConString(){
 	return conString
 }
-function getTableName(){
-	return default_table_name
-}
 
 module.exports = {
 	sqlite: setSqlite,
@@ -298,7 +284,6 @@ module.exports = {
 	temp: setTableType,
 	verbose: setLogging,
 	flavor: getFlavor,
-	connection: getConString,
-	tableName: getTableName
+	connection: getConString
 }
 

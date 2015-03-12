@@ -237,5 +237,5 @@ tests.queriesEach = function(cb){
 	})
 }
 
-ts.verbose(true)
+ts.verbose(false)
 runTests()

@@ -1,5 +1,5 @@
-var Client      = require('pg').Client,
-		colors      = require('colors');
+var Client = require('pg').Client;
+var colors = require('colors');
 
 
 var client,
