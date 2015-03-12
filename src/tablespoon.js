@@ -157,7 +157,7 @@ function setPgsql(connection_string){
 function connectToDb(connection_string){
 	conString = connection_string || conString;
 	if (flavor == 'sqlite'){
-		client = sqlite.connectToDb();
+		client = sqlite.connectToDb(conString);
 	} else if (flavor == 'pgsql'){
 		client = pgsql.connectToDb(conString)
 	}

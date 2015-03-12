@@ -16,8 +16,8 @@ var helpers = {
 	}
 }
 
-function connectToDb(){
-	db = db || new sqlite3.Database(':memory:');
+function connectToDb(conString){
+	db = db || new sqlite3.Database(conString);
 	return this
 }
 
