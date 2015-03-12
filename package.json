@@ -4,7 +4,7 @@
   "description": "A NodeJS postgres wrapper to easily create tabls from json or csv data and run queries.",
   "main": "./src/tablespoon.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./test/test.js"
   },
   "bin": {
     "tablespoon": "./bin/tablespoon.js"
