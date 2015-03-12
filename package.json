@@ -1,12 +1,12 @@
 {
   "name": "tablespoon",
-  "version": "0.1.7",
-  "description": "A node-postgres wrapper to easilly query json or csv data.",
+  "version": "0.2.0",
+  "description": "A NodeJS postgres wrapper to easily create tabls from json or csv data and run queries.",
   "main": "./src/tablespoon.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
- "bin": {
+  "bin": {
     "tablespoon": "./bin/tablespoon.js"
   },
   "repository": {
@@ -21,18 +21,22 @@
     "sqlite",
     "memory"
   ],
-  "author": {
-    "name": "Michael Keller"
-  },
+  "author": "Michael Keller",
   "license": "MIT",
-  "node": "0.10.5",
-  "readmeFilename": "README.md",
   "dependencies": {
     "underscore": ">=1.5.2",
-    "pg": "~2.10.0",
+    "pg": "~4.3.0",
     "colors": "~0.6.2",
-    "sqlite3": "~2.1.19",
+    "sqlite3": "~3.0.5",
     "optimist": "~0.6.0",
     "dsv": "~0.0.3"
+  },
+  "bugs": {
+    "url": "https://github.com/ajam/tablespoon/issues"
+  },
+  "homepage": "https://github.com/ajam/tablespoon",
+  "directories": {
+    "example": "examples",
+    "test": "test"
   }
 }

@@ -26,7 +26,7 @@ var client,
 		tables = [],
 		flavor = defaults.flavor,
 		conString = defaults.connection,
-		table_name_default = defaults.db_name,
+		default_table_name = defaults.default_table_name,
 		table_type = 'TEMP ',
 		connected = false,
 		verbose = false;
@@ -179,7 +179,7 @@ function connectToDb(connection_string){
 
 function createTableCommands(table_data, table_name, table_schema, permanent, skip_insert){
 	setTableType(permanent);
-	table_name = table_name || table_name_default;
+	table_name = table_name || default_table_name;
 	var table_commands = {};
 	table_commands.create = 'CREATE ' + table_type + 'TABLE ' + table_name + ' (uid ' + ((flavor == 'sqlite') ? 'INTEGER' : 'BIGSERIAL') + ' PRIMARY KEY,' + ((table_schema) ? table_schema : helpers.columnTypesToString(table_data)) + ')';
 	if (!skip_insert){
@@ -283,7 +283,7 @@ function getConString(){
 	return conString
 }
 function getTableName(){
-	return table_name_default
+	return default_table_name
 }
 
 module.exports = {

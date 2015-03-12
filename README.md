@@ -69,6 +69,10 @@ ts.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 })
 ````
 
+### Testing
+
+Requies a `postgres` role.
+
 ### Used in
 
 Analysis for [Nominated for the Oscars but failing the Bechdel sexism test](http://america.aljazeera.com/articles/2014/1/17/nominated-for-theoscarsbutfailingthebechdeltest.html) - Al Jazeera America

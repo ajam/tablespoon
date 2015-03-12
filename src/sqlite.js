@@ -28,6 +28,7 @@ function createAndInsert(table_commands){
 
 function createTable(create_commands){
 	db_instance = db.serialize(function(){
+	console.log(create_commands)
 		db.run(create_commands)
 	})
 }

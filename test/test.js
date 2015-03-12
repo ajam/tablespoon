@@ -1,4 +1,4 @@
-var ts     = require('../src/tablespoon.js'),
+var ts     = require('../src/tablespoon.js').pgsql('pg://postgres:5432@localhost'),
 		colors = require('colors'),
 		_      = require('underscore');
 
@@ -21,12 +21,12 @@ data.text_array_ = [{
 data.date_  = [{
 	today: new Date()
 }]
-// data.json_ = [{
-// 	restaurants: [{
-// 		name: 'The Apple Pan',
-// 		dish: 'Chocolate Cream Pie'
-// 	}]
-// }]
+data.json_ = [{
+	restaurants: [{
+		name: 'The Apple Pan',
+		dish: 'Chocolate Cream Pie'
+	}]
+}]
 data.single_quotes_ = [{
 	pastrami: "Nate'n'Als"
 }]
@@ -142,17 +142,17 @@ data.null_arr01_ = [
 
 function logResult(name, pass){
 	if (pass){
-		console.log(name.magenta)
+		console.log(name.magenta, 'pass'.green)
 	}else{
 		console.error('Fail :('.red, name)
 	}
 }
 function runTests(){
 	_.each(tests, function(fn, name){
-		fn(cb);
-		function cb(pass){
+		fn(function(pass){
 			logResult(name, pass)
-		}
+		});
+		
 	})
 }
 
@@ -177,7 +177,7 @@ tests.createTables = function(cb){
 tests.query = function(cb){
 	ts.query('SELECT * FROM mixed_', function(result){
 		// result.rows.forEach(function(row){	delete row.uid })
-		// Add && _.isEqual(result.rows,data.mixed_ when merged https://github.com/brianc/node-postgres/pull/501
+		// Add && _.isEqual(result.rows,data.mixed_) when merged https://github.com/brianc/node-postgres/pull/501
 		if (result.query == 'SELECT * FROM mixed_'){
 			cb(true)
 		}else{
@@ -188,7 +188,7 @@ tests.query = function(cb){
 tests.queryNull = function(cb){
 	ts.query('SELECT * FROM null_', function(result){
 		// result.rows.forEach(function(row){	delete row.uid })
-		// Add && _.isEqual(result.rows,data.mixed_ when merged https://github.com/brianc/node-postgres/pull/501
+		// Add && _.isEqual(result.rows,data.null_) when merged https://github.com/brianc/node-postgres/pull/501
 		if (result.query == 'SELECT * FROM null_'){
 			cb(true)
 		}else{
@@ -199,7 +199,7 @@ tests.queryNull = function(cb){
 tests.queryNullArr0 = function(cb){
 	ts.query('SELECT * FROM null_arr0_', function(result){
 		// result.rows.forEach(function(row){	delete row.uid })
-		// Add && _.isEqual(result.rows,data.mixed_ when merged https://github.com/brianc/node-postgres/pull/501
+		// Add && _.isEqual(result.rows,data.null_arr0_) when merged https://github.com/brianc/node-postgres/pull/501
 		if (result.query == 'SELECT * FROM null_arr0_'){
 			cb(true)
 		}else{
@@ -209,9 +209,9 @@ tests.queryNullArr0 = function(cb){
 }
 tests.queryNullArr = function(cb){
 	ts.query('SELECT * FROM null_arr_', function(result){
-		console.log(result.rows)
+		// console.log(result.rows)
 		// result.rows.forEach(function(row){	delete row.uid })
-		// Add && _.isEqual(result.rows,data.mixed_ when merged https://github.com/brianc/node-postgres/pull/501
+		// Add && _.isEqual(result.rows,data.null_arr_) when merged https://github.com/brianc/node-postgres/pull/501
 		if (result.query == 'SELECT * FROM null_arr_'){
 			cb(true)
 		}else{
@@ -222,7 +222,7 @@ tests.queryNullArr = function(cb){
 tests.queryNullArr01 = function(cb){
 	ts.query('SELECT * FROM null_arr01_', function(result){
 		// result.rows.forEach(function(row){	delete row.uid })
-		// Add && _.isEqual(result.rows,data.mixed_ when merged https://github.com/brianc/node-postgres/pull/501
+		// Add && _.isEqual(result.rows,data.null_arr01_) when merged https://github.com/brianc/node-postgres/pull/501
 		if (result.query == 'SELECT * FROM null_arr01_'){
 			cb(true)
 		}else{
@@ -233,7 +233,7 @@ tests.queryNullArr01 = function(cb){
 tests.queriesEach = function(cb){
 	var queries = ['SELECT * FROM null_arr01_', 'SELECT * FROM null_arr_']
 	ts.queries.each(queries, function(result){
-		console.log(result)
+		// console.log(result)
 	})
 }
 

@@ -1,4 +1,4 @@
-var ts = require('../../src/tablespoon.js').pgsql('pg://postgres@localhost/');
+var ts = require('../../src/tablespoon.js').pgsql();
 
 var data = [
 	{
