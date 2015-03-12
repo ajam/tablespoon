@@ -71,7 +71,7 @@ ts.query('SELECT * FROM cities WHERE 15 != ALL (temp)', function(rows){
 
 ### Testing
 
-Requies a `postgres` role.
+Examples and testing require a `postgres` role unless you change the connection string your own role. Create with `createuser -s -r postgres` from the command line.
 
 ### Used in
 
