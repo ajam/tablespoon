@@ -1,6 +1,6 @@
 {
   "name": "tablespoon",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A NodeJS postgres wrapper to easily create tabls from json or csv data and run queries.",
   "main": "./src/tablespoon.js",
   "scripts": {
