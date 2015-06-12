@@ -24,12 +24,12 @@
   "author": "Michael Keller",
   "license": "MIT",
   "dependencies": {
-    "underscore": ">=1.5.2",
-    "pg": "~4.3.0",
     "colors": "~0.6.2",
-    "sqlite3": "~3.0.5",
+    "dsv": "~0.0.3",
     "optimist": "~0.6.0",
-    "dsv": "~0.0.3"
+    "pg": "~4.3.0",
+    "sqlite3": "~3.0.5",
+    "underscore": ">=1.5.2"
   },
   "bugs": {
     "url": "https://github.com/ajam/tablespoon/issues"
