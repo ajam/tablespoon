@@ -3,6 +3,7 @@ var _           = require('underscore');
 var sqlite      = require('./sqlite.js');
 var pgsql       = require('./pgsql.js');
 var colors      = require('colors');
+var stream = require('stream');
 
 function reportMsg(msg){
 	if(verbose){
@@ -87,7 +88,7 @@ var helpers = {
 		var columns = this.describeColumns(data),
 				column_types = [];
 		_.each(columns, function(value, key){
-			column_types.push(key + ' ' + value.toUpperCase())
+			column_types.push('"' + key.toLowerCase().replace(/ /g, '_') + '" ' + value.toUpperCase())
 		})
 		return column_types.join(',')
 	},
@@ -132,7 +133,11 @@ var helpers = {
 		return holder.join(',');
 	},
 	assembleValueInsertString: function(data, tableName){
-	  var stmt ='INSERT INTO ' + tableName + ' (' + _.keys(data[0]).join(',') + ') VALUES ',
+        var columns = _.keys(data[0]);
+        columns = _.map(columns, function (column) {
+            return column.toLowerCase().replace(/ /g, '_');
+        });
+	  var stmt ='INSERT INTO ' + tableName + ' ("' + columns.join('","') + '") VALUES ',
 	      val_arr = [];
 		for (var i = 0; i < data.length; i++){
 			val_arr.push('(' + helpers.prepValuesForInsert([], data[i]) + ')');
@@ -212,6 +217,24 @@ function makeTableFromData(table_data, tableName, table_schema, permanent){
 	createAndInsert(table_commands);
 }
 
+function makeTableFromDataStreaming(tableName, tableSchema, permanent){
+    var tableStream = new stream.Writable();
+    tableStream.data = [];
+
+    // Buffer tableDataStream
+    tableStream._write = function (chunk, encoding, cb) {
+        this.data.push(chunk);
+        cb();
+    };
+
+    // When finished, parse JSON and load into the table
+    tableStream.on('finish', function () {
+        var parsed = JSON.parse(Buffer.concat(this.data).toString());
+        makeTableFromData(parsed, tableName, tableSchema, permanent);
+    });
+    return tableStream;
+}
+
 function query(query_text, cb){
 	if (!connected) connectToDb();
 	if (flavor == 'sqlite'){
@@ -276,6 +299,7 @@ module.exports = {
 	sqlite: setSqlite,
 	pgsql: setPgsql,
 	createTable: makeTableFromData,
+	createTableStreaming: makeTableFromDataStreaming,
 	createEmptyTable: createTable,
 	insert: insertInto,
 	query: query,

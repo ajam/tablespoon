@@ -3,8 +3,9 @@ var colors = require('colors');
 
 
 var client,
-		err_preview_length = 100,
-		connected = false;
+    connection_string,
+    err_preview_length = 100,
+    connected = false;
 
 var helpers = {
 	handleErr: function(err, msg, qt){
@@ -21,7 +22,8 @@ var helpers = {
 	}
 }
 
-function connectToDb(connection_string){
+function connectToDb(con_string){
+    connection_string = con_string;
 	client = client || new Client(connection_string);
 	//disconnect client when all queries are finished
   client.on('drain', client.end.bind(client)); 
@@ -50,13 +52,21 @@ function insertInto(insert_commands){
 }
 
 function query(query_text, cb){
-	var result_obj = {}
-  client.query(query_text, function(err, result){
-  	helpers.handleErr(err, 'query', query_text)
-  	result_obj.query = query_text;
-  	result_obj.rows  = result.rows
-  	cb(result_obj);
-  })
+    // TODO but with pooling!
+	client = new Client(connection_string);
+    client.connect(function (err) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        var result_obj = {};
+        client.query(query_text, function(err, result){
+            helpers.handleErr(err, 'query', query_text);
+            result_obj.query = query_text;
+            result_obj.rows  = result.rows;
+            cb(result_obj);
+        });
+    });
 }
 function queries(query_texts, cb){
 	var results = [],
