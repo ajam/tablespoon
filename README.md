@@ -1,5 +1,7 @@
 # Tablespoon
 
+**This repository is no longer being maintained. Please use [https://github.com/mhkeller/tablespoon2](https://github.com/mhkeller/tablespoon2).**
+
 Easily query spreadsheet-like or json data with SQLite or PostgreSQL. Built around[ node-postgres](https://github.com/brianc/node-postgres) and [node-sqlite3](https://github.com/mapbox/node-sqlite3).
 
 ### Installation
